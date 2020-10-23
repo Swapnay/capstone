@@ -1,5 +1,5 @@
 
-# Effect of Covid-19 on  Economy
+# Effect of Covid-19 on  Economy (work-in-progress)
 ## 1. Problem Definition
 The COVID-19 virus pandemic has led to unexpected interruptions in economic activity around the world.In efforts to slow down the spread of COVID-19, many states and countries shut down several economic areas such as tourism and entertainment venues, restaurants, personal services, and some manufacturing facilities. This has led many areas into a recession. According to UNIDO, the economic crisis unleashed by the outbreak of COVID-19 is hurting economies, regardless of income level.
 In this capstone will visualize the progression of COVID-19 in terms of number of cases and deaths along with its effect on areas such as stock market, employment, CPI, food and agriculture. Time series data will be collected from various  sources that represent these area.
@@ -9,6 +9,7 @@ This capstone will try to provide visual view for below questions:
 
 The most raised / dropped stocks
 The most stable/unstable stocks
+
 **CPI:**
 
 How consumer spending has changed
