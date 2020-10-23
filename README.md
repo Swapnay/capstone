@@ -1,39 +1,39 @@
 
-Effect of Covid-19 on  Econo
-1. Problem Definition
+# Effect of Covid-19 on  Economy
+## 1. Problem Definition
 The COVID-19 virus pandemic has led to unexpected interruptions in economic activity around the world.In efforts to slow down the spread of COVID-19, many states and countries shut down several economic areas such as tourism and entertainment venues, restaurants, personal services, and some manufacturing facilities. This has led many areas into a recession. According to UNIDO, the economic crisis unleashed by the outbreak of COVID-19 is hurting economies, regardless of income level.
-In this capstone will visualize the progression of COVID-19 in terms of number of cases and deaths along with its effect on areas such as stock market, employment, CPI, food and agriculture. 
- We collect time series data from various  sources that represent these area.
+In this capstone will visualize the progression of COVID-19 in terms of number of cases and deaths along with its effect on areas such as stock market, employment, CPI, food and agriculture. Time series data will be collected from various  sources that represent these area.
 This capstone will try to provide visual view for below questions:
 
-Stock market.
+** Stock market.
 The most raised / dropped stocks
 The most stable/unstable stocks
-CPI:
-How consumer spending has changed
+**CPI:
 
-Employment:
+How consumer spending has changed
+Areas of increased/decreased spending 
+
+**Employment:
+
 Industries that have majority job losses.
 Education level and income range of majority un employed.
+**food and agriculture
 
-2. Expected Results
+## 2. Expected Results
 Since the data is continuous, Current plan is to use line chart, column chart and combination of both.
 
-3. Datasets
+## 3 Datasets
 In this section, we describe in detail how to get data from datasources.
 
-Covid-19
-This datase has two subsets: global and the US.
+**Covid-19
 
-Data source, JHU CSSE Covid-19 Dataset
+Two datasets involved: global and the US.
 
-Confirmed cases US
-Deaths US
-Confirmed cases global
-Deaths global
+Data source:https://data.cdc.gov and https://covid19.who.int/
+
 Type: Time series
 
-Supported methods: API, csv
+Supported methods:  csv
 
 Frequency: daily
 
@@ -42,11 +42,10 @@ Interested features:
 For each country/area/territory we interested in:
 
 Population
-World bank group (High Income,Upper Middle Income, Lower Middle Income, Low Income)
 Total cases
 Total deaths
-Total tests
-Test per case
+Tital new cases
+
 Sample code:
 
 import pandas as pd
@@ -88,8 +87,7 @@ World data:
  
 
 currentday
-Stock Prices
-Currently, there are three methods to get stock prices: Yahoo Finance API, Google Finance API, and pandas_datareader. Only the last one work.
+**Stock Prices
 
 Type: Time series
 
@@ -97,12 +95,9 @@ Supported methods: API, json
 
 Frequency: daily
 
-We focus on popular stock market in the US such as S&P500, Dow Jones, and Nasdaq
+iexfinance API can be used to extract the data.This API takes stock ticker as input.  
 
-How to extract data
 
-First, we get the master list of all stock stickers. That is done by manually input the list or using the API.
-Next, for each stock sticker, we get the stock prices data using Yahoo's API.
 
  from iexfinance.refdata import get_symbols
  from iexfinance.stocks import Stock
@@ -122,9 +117,12 @@ date
 2016-01-06  25.14  25.59  24.97  25.18  273829552
 2016-01-07  24.67  25.03  24.11  24.11  324377712
 2016-01-08  24.64  24.78  24.19  24.24  283192064
-Consumer Price Index:
+ 
+**Consumer Price Index:
 
-Employment / Unemployment rate
+**Employment / Unemployment rate
 
-4. Data model
+## 4. Data model
 Using snowflake model
+## References
+https://www.uaex.edu/life-skills-wellness/health/covid19/COVID-Economic_Impacts_in_Arkansas.aspx
