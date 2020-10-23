@@ -5,19 +5,21 @@ The COVID-19 virus pandemic has led to unexpected interruptions in economic acti
 In this capstone will visualize the progression of COVID-19 in terms of number of cases and deaths along with its effect on areas such as stock market, employment, CPI, food and agriculture. Time series data will be collected from various  sources that represent these area.
 This capstone will try to provide visual view for below questions:
 
-** Stock market.
+**Stock market:**
+
 The most raised / dropped stocks
 The most stable/unstable stocks
-**CPI:
+**CPI:**
 
 How consumer spending has changed
 Areas of increased/decreased spending 
 
-**Employment:
+**Employment:**
 
 Industries that have majority job losses.
 Education level and income range of majority un employed.
-**food and agriculture
+
+**food and agriculture:**
 
 ## 2. Expected Results
 Since the data is continuous, Current plan is to use line chart, column chart and combination of both.
@@ -25,7 +27,7 @@ Since the data is continuous, Current plan is to use line chart, column chart an
 ## 3 Datasets
 In this section, we describe in detail how to get data from datasources.
 
-**Covid-19
+**Covid-19**
 
 Two datasets involved: global and the US.
 
@@ -86,8 +88,8 @@ World data:
  109    2020-04-21  Afghanistan          96               1092            3   36                   
  
 
-currentday
-**Stock Prices
+
+**Stock Prices:**
 
 Type: Time series
 
@@ -118,9 +120,9 @@ date
 2016-01-07  24.67  25.03  24.11  24.11  324377712
 2016-01-08  24.64  24.78  24.19  24.24  283192064
  
-**Consumer Price Index:
+**Consumer Price Index:**
 
-**Employment / Unemployment rate
+**Employment / Unemployment rate:**
 
 ## 4. Data model
 Using snowflake model
