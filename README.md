@@ -49,12 +49,13 @@ Total deaths
 Tital new cases
 
 Sample code:
-
+```
 import pandas as pd
 pd.set_option('display.max_columns', 7)
 covid_data = pd.read_csv("https://data.cdc.gov/api/views/9mfq-cb36/rows.csv?accessType=DOWNLOAD")
 print(covid_data[["submission_date", "state", "tot_cases", "new_case", "tot_death",]][100:110])
 covid_data.to_csv("../docs/cdc_covid.csv")
+
 US Raw data sample:
     submission_date state  tot_cases  new_case  tot_death
  100      05/01/2020    CO      15668       486        820
@@ -86,7 +87,7 @@ World data:
  107    2020-04-19  Afghanistan          88                996            3   33
  108    2020-04-20  Afghanistan           0                996            0   33
  109    2020-04-21  Afghanistan          96               1092            3   36                   
- 
+ ```
 
 
 **Stock Prices:**
@@ -100,7 +101,7 @@ Frequency: daily
 iexfinance API can be used to extract the data.This API takes stock ticker as input.  
 
 
-
+```
  from iexfinance.refdata import get_symbols
  from iexfinance.stocks import Stock
  from datetime import datetime
@@ -119,7 +120,7 @@ date
 2016-01-06  25.14  25.59  24.97  25.18  273829552
 2016-01-07  24.67  25.03  24.11  24.11  324377712
 2016-01-08  24.64  24.78  24.19  24.24  283192064
- 
+ ```
 **Consumer Price Index:**
 
 **Employment / Unemployment rate:**
