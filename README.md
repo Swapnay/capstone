@@ -32,7 +32,7 @@ In this section, we describe in detail how to get data from datasources.
 
 Two datasets involved: global and the US.
 
-Data source:https://data.cdc.gov and https://covid19.who.int/
+Data source:[USA](https://data.cdc.gov) and [World](https://covid19.who.int/)
 
 Type: Time series
 
@@ -124,9 +124,126 @@ date
  ```
 **Consumer Price Index:**
 
+- Data Source: [source](https://www.bls.gov/cpi/tables/supplemental-files/news-release-table1-202009.xlsx)
+- Interested in knowing how consumer spending has changed during covid.
+Sample:
+
+```import pandas as pd
+   import requests
+   dls = "https://www.bls.gov/cpi/tables/supplemental-files/news-release-table1-202009.xlsx"
+   resp = requests.get(dls)
+   
+   with open('../datasets/bls_cpi_download.xlsx', 'wb') as writer:
+       writer.write(resp.content)
+   
+   pd.set_option('display.max_columns', 7)
+   cpi_data = pd.read_excel("../datasets/bls_cpi_download.xlsx")
+   cpi_data =cpi_data.drop([0, 1])
+   print(cpi_data)
+   
+   cpi_data.to_csv("../datasets/bls_cpi.csv",encoding='utf-8', index=False)
+   cpi_data_csv = pd.read_csv("../datasets/bls_cpi.csv")
+```
+
+
 **Employment / Unemployment rate:**
+
+- DataSource: [source](https://www.bls.gov/webapps/legacy/cpsatab14.htm)
+- Type: Time series - monthly
+- Interested Series:
+  - Unemployment by industry 
+  - Unemployment by occupation
+  - employment by education level
+  - Employment by race
+  - Total unemployment
+  
+ Sample:
+ ```
+import requests
+import json
+import prettytable
+headers = {'Content-type': 'application/json'}
+data = json.dumps({"seriesid": ['LNU03032229'],"startyear":"2011", "endyear":"2014"})
+p = requests.post('https://api.bls.gov/publicAPI/v2/timeseries/data/', data=data, headers=headers)
+json_data = json.loads(p.text)
+for series in json_data['Results']['series']:
+    x=prettytable.PrettyTable(["series id","year","period","value","footnotes"])
+    seriesId = series['seriesID']
+    for item in series['data']:
+        year = item['year']
+        period = item['period']
+        value = item['value']
+        footnotes=""
+        for footnote in item['footnotes']:
+            if footnote:
+                footnotes = footnotes + footnote['text'] + ','
+        if 'M01' <= period <= 'M12':
+            x.add_row([seriesId,year,period,value,footnotes[0:-1]])
+output = open('../datasets/'+seriesId + '.txt','w')
+output.write (x.get_string())
+output.close()
+```
+Output:
+
+```
++-------------+------+--------+-------+-----------+
+|  series id  | year | period | value | footnotes |
++-------------+------+--------+-------+-----------+
+| LNU03032229 | 2014 |  M12   |  6341 |           |
+| LNU03032229 | 2014 |  M11   |  6413 |           |
+| LNU03032229 | 2014 |  M10   |  6580 |           |
+| LNU03032229 | 2014 |  M09   |  6766 |           |
+| LNU03032229 | 2014 |  M08   |  7200 |           |
+| LNU03032229 | 2014 |  M07   |  7366 |           |
+| LNU03032229 | 2014 |  M06   |  7164 |           |
+| LNU03032229 | 2014 |  M05   |  7243 |           |
+| LNU03032229 | 2014 |  M04   |  7105 |           |
+| LNU03032229 | 2014 |  M03   |  8110 |           |
+| LNU03032229 | 2014 |  M02   |  8479 |           |
+| LNU03032229 | 2014 |  M01   |  8437 |           |
+| LNU03032229 | 2013 |  M12   |  7662 |           |
+| LNU03032229 | 2013 |  M11   |  7882 |           |
+| LNU03032229 | 2013 |  M10   |  8011 |           |
+| LNU03032229 | 2013 |  M09   |  8216 |           |
+| LNU03032229 | 2013 |  M08   |  8391 |           |
+| LNU03032229 | 2013 |  M07   |  8683 |           |
+| LNU03032229 | 2013 |  M06   |  8800 |           |
+| LNU03032229 | 2013 |  M05   |  8655 |           |
+| LNU03032229 | 2013 |  M04   |  8608 |           |
+| LNU03032229 | 2013 |  M03   |  9148 |           |
+| LNU03032229 | 2013 |  M02   |  9826 |           |
+| LNU03032229 | 2013 |  M01   | 10435 |           |
+| LNU03032229 | 2012 |  M12   |  9104 |           |
+| LNU03032229 | 2012 |  M11   |  8600 |           |
+| LNU03032229 | 2012 |  M10   |  8892 |           |
+| LNU03032229 | 2012 |  M09   |  8935 |           |
+| LNU03032229 | 2012 |  M08   |  9552 |           |
+| LNU03032229 | 2012 |  M07   |  9692 |           |
+| LNU03032229 | 2012 |  M06   |  9626 |           |
+| LNU03032229 | 2012 |  M05   |  9419 |           |
+| LNU03032229 | 2012 |  M04   |  9197 |           |
+| LNU03032229 | 2012 |  M03   | 10106 |           |
+| LNU03032229 | 2012 |  M02   | 10517 |           |
+| LNU03032229 | 2012 |  M01   | 10736 |           |
+| LNU03032229 | 2011 |  M12   |  9956 |           |
+| LNU03032229 | 2011 |  M11   |  9740 |           |
+| LNU03032229 | 2011 |  M10   | 10126 |           |
+| LNU03032229 | 2011 |  M09   | 10375 |           |
+| LNU03032229 | 2011 |  M08   | 10524 |           |
+| LNU03032229 | 2011 |  M07   | 10515 |           |
+| LNU03032229 | 2011 |  M06   | 10733 |           |
+| LNU03032229 | 2011 |  M05   | 10628 |           |
+| LNU03032229 | 2011 |  M04   | 10560 |           |
+| LNU03032229 | 2011 |  M03   | 11288 |           |
+| LNU03032229 | 2011 |  M02   | 11641 |           |
+| LNU03032229 | 2011 |  M01   | 11778 |           |
++-------------+------+--------+-------+-----------+
+
+```
+    
+   
 
 ## 4. Data model
 Using snowflake model
 ## References
-https://www.uaex.edu/life-skills-wellness/health/covid19/COVID-Economic_Impacts_in_Arkansas.aspx
+[Reference1](https://www.uaex.edu/life-skills-wellness/health/covid19/COVID-Economic_Impacts_in_Arkansas.aspx)
