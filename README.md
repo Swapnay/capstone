@@ -7,47 +7,47 @@ This capstone will try to provide visual view for below questions:
 
 **Stock market:**
 
-The most raised / dropped stocks
-The most stable/unstable stocks
+- The most raised / dropped stocks
+- The most stable/unstable stocks
 
 **CPI:**
 
-How consumer spending has changed
-Areas of increased/decreased spending 
+- How consumer spending has changed
+- Areas of increased/decreased spending 
 
 **Employment:**
 
-Industries that have majority job losses.
-Education level and income range of majority un employed.
+- Industries that have majority job losses.
+- Education level and income range of majority un employed.
 
 **food and agriculture:**
 
 ## 2. Expected Results
 Since the data is continuous, Current plan is to use line chart, column chart and combination of both.
 
-## 3 Datasets
+## 3 Data sets
 In this section, we describe in detail how to get data from datasources.
 
 **Covid-19**
 
-Two datasets involved: global and the US.
+- Two data sets involved: global and the US.
 
-Data source:[USA](https://data.cdc.gov) and [World](https://covid19.who.int/)
+- Data source:[USA](https://data.cdc.gov) and [World](https://covid19.who.int/)
 
-Type: Time series
+- Type: Time series
 
-Supported methods:  csv
+- Supported methods:  csv
 
-Frequency: daily
+- Frequency: daily
 
-Interested features:
+Interested Data:
 
-For each country/area/territory we interested in:
+- For each country/State we interested in:
 
-Population
-Total cases
-Total deaths
-Tital new cases
+  - Population
+  - Total cases
+  - Total deaths
+  - Total new cases
 
 Sample code:
 ```
