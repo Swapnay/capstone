@@ -20,6 +20,11 @@ This capstone will try to provide visual view for below questions:
 - Industries that have majority job losses.
 - Education level and income range of majority un employed.
 
+**Housing Market:**
+
+- How housing prices changed in each city
+- How Inventory changed and sales are moving (Metro & US)
+ 
 **food and agriculture:**
 
 ## 2. Expected Results
@@ -240,8 +245,40 @@ Output:
 +-------------+------+--------+-------+-----------+
 
 ```
+**Housing Market:**
+  - DataSource: [Zillow](https://www.zillow.com/research/data/)
+  - Type: Time series - monthly/weekly
+  - Interested Series:
+    - Top tier for a region 65th to 95th percentile range for a given region
+    - Bottom-tier  (typical value for homes that fall within the 5th to 35th percentile range for a given region).
+    - Typical value for all single-family homes in a given region
+    - For-Sale Inventory
+    - Days to Pending
+    - Median Sale Price
     
-   
+Sample
+```
+import pandas as pd
+pd.set_option('display.max_columns', 7)
+housing_data = pd.read_csv("http://files.zillowstatic.com/research/public_v2/zhvi/City_zhvi_uc_sfrcondo_tier_0.67_1.0_sm_sa_mon.csv")
+print(housing_data.columns)
+print(housing_data[["RegionName", "StateName", "CountyName", '2020-05-31', '2020-06-30', '2020-07-31', '2020-08-31', '2020-09-30' ]][10:20])
+housing_data.to_csv("../datasets/housing_usa.csv")
+
+
+ RegionName StateName            CountyName  ...  2020-07-31  \         2020-08-31
+10         Austin        TX         Travis County  ...    668559.0      675088.0
+11       San Jose        CA    Santa Clara County  ...   1408057.0      1434708.0
+12   Jacksonville        FL          Duval County  ...    298747.0      300912.0
+13   Indianapolis        IN         Marion County  ...    254294.0      257201.0
+14  San Francisco        CA  San Francisco County  ...   2071877.0      2076277.0
+15      Charlotte        NC    Mecklenburg County  ...    456816.0      461385.0
+16     Fort Worth        TX        Tarrant County  ...    317164.0      319543.0
+17         Tucson        AZ           Pima County  ...    347079.0      350456.0
+18       Columbus        OH       Franklin County  ...    271790.0      274608.0
+19     Louisville        KY      Jefferson County  ...    307231.0      309979.0
+
+```
 
 ## 4. Data model
 Using snowflake model
