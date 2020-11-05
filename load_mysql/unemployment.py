@@ -1,9 +1,7 @@
 from extract.unemploymentdata import UnemploymentData
 import json
-import pandas as pd
 from sqlalchemy import text
 from dbconfig import engine
-from decimal import Decimal
 
 class Unemployment:
     series_column={
@@ -108,7 +106,7 @@ class Unemployment:
                     print(row_data)
                     print(self.query.get(key))
                     print( json.dumps(row_data))
-                    conn.execute(self.query.get(key), row_data)#**json.dumps(row_data))
+                    conn.execute(self.query.get(key), row_data)
 
 
 

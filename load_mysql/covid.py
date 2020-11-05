@@ -1,15 +1,12 @@
-from sqlalchemy.dialects import mysql
 from sqlalchemy import text
 import numpy as np
 import datetime
 from extract.covid_data import CovidData
-from decimal import Decimal
 import pandas as pd
 from dbconfig import engine
 
 
 class covid:
-
     select_state = """SELECT id FROM state_dim WHERE code =%s """
     select_country_name = """SELECT id FROM country_dim WHERE country_name =%s"""
     insert_country_query = text("""INSERT INTO country_dim(country_name) VALUES(:country_name) """)
@@ -22,7 +19,6 @@ class covid:
     insert_world_fact = text("""INSERT INTO covid_world_fact( date_id, country_id, continent, submission_date, new_deaths, new_cases, total_cases, total_deaths, total_cases_per_million, total_deaths_per_million, new_cases_per_million, new_deaths_per_million, icu_patients, icu_patients_per_million, hosp_patients, hosp_patients_per_million, weekly_icu_admissions, weekly_icu_admissions_per_million, weekly_hosp_admissions, weekly_hosp_admissions_per_million, total_tests, new_tests, total_tests_per_thousand, new_tests_per_thousand, tests_per_case, positive_rate,  stringency_index, population, population_density, median_age, aged_65_older, aged_70_older, gdp_per_capita, extreme_poverty, cardiovasc_death_rate, diabetes_prevalence, handwashing_facilities, hospital_beds_per_thousand, life_expectancy, human_development_index)
     VALUES( :date_id, :country_id, :continent, :submission_date, :new_deaths, :new_cases, :total_cases, :total_deaths, :total_cases_per_million, :total_deaths_per_million, :new_cases_per_million, :new_deaths_per_million, :icu_patients, :icu_patients_per_million, :hosp_patients, :hosp_patients_per_million, :weekly_icu_admissions, :weekly_icu_admissions_per_million, :weekly_hosp_admissions, :weekly_hosp_admissions_per_million, :total_tests, :new_tests, :total_tests_per_thousand, :new_tests_per_thousand, :tests_per_case, :positive_rate,  :stringency_index, :population, :population_density, :median_age, :aged_65_older, :aged_70_older, :gdp_per_capita, :extreme_poverty, :cardiovasc_death_rate, :diabetes_prevalence, :handwashing_facilities, :hospital_beds_per_thousand, :life_expectancy, :human_development_index)""")
 
-
     def load_data(self):
         for key in CovidData.covid_config:
             self.fill_tables("../datasets/" + key + ".csv", key)
@@ -33,7 +29,6 @@ class covid:
         columns = df.columns
         print(columns)
         print(df.shape)
-        '''df.fillna(0)'''
         df = df.replace(np.nan, 0, regex=True)
 
         for i in range(df.shape[0]):
@@ -47,14 +42,14 @@ class covid:
                     tot_death = df.iloc[i]["tot_death"]
                     new_death = df.iloc[i]["new_death"]
                     date_time_obj = datetime.datetime.strptime(sub_date, '%m/%d/%Y')
-                    date_args = {"day":date_time_obj.day,"month":date_time_obj.month,"year": date_time_obj.year}
+                    date_args = {"day": date_time_obj.day, "month": date_time_obj.month, "year": date_time_obj.year}
                     date_id = self.execute_query(conn, self.select_date_dim_query, (date_time_obj.day, date_time_obj.month, date_time_obj.year))
                     if date_id is None:
                         result = conn.execute(self.date_dim_query, (date_args))
                         date_id = result.lastrowid
                     state_id = self.execute_query(conn, covid.select_state, (state))
-                    result = conn.execute(self.select_usa_fact, (date_id,state_id))
-                    if result.rowcount>0:
+                    result = conn.execute(self.select_usa_fact, (date_id, state_id))
+                    if result.rowcount > 0:
                         continue
                     args = {"date_id": date_id, "state_id": state_id, "submit_date": date_time_obj, "new_deaths": new_death, "new_cases": new_cases,
                             "total_deaths": tot_death, "total_cases": tot_cases}
@@ -107,48 +102,46 @@ class covid:
                     life_expectancy = df.iloc[i]["life_expectancy"]
                     human_development_index = df.iloc[i]["human_development_index"]
 
-
                     date_time_obj = datetime.datetime.strptime(sub_date, '%Y-%m-%d')
-                    date_args = {"day":date_time_obj.day,"month":date_time_obj.month,"year": date_time_obj.year}
+                    date_args = {"day": date_time_obj.day, "month": date_time_obj.month, "year": date_time_obj.year}
                     date_id = self.execute_query(conn, self.select_date_dim_query, (date_time_obj.day, date_time_obj.month, date_time_obj.year))
                     if date_id is None:
-                        result= conn.execute( self.date_dim_query, (date_args))
+                        result = conn.execute(self.date_dim_query, (date_args))
                         date_id = result.lastrowid
                     try:
-                        country_args ={"country_name":country}
+                        country_args = {"country_name": country}
                         country_id = self.execute_query(conn, covid.select_country_name, country)
 
                     except Exception as ex:
                         print("Exception " + ex)
                         continue
                     if country_id is None:
-                        result = conn.execute(covid.insert_country_query,country_args)
+                        result = conn.execute(covid.insert_country_query, country_args)
                         country_id = result.lastrowid
 
                     args = {"date_id": date_id, "country_id": country_id}
-                    result = conn.execute(self.select_world_fact, (date_id,country_id))
-                    if result.rowcount>0:
+                    result = conn.execute(self.select_world_fact, (date_id, country_id))
+                    if result.rowcount > 0:
                         continue
-                    args = { "date_id":date_id, "country_id": country_id, "continent":continent, "submission_date": date_time_obj, "new_deaths":new_deaths, "new_cases":new_cases,
-                             "total_cases":total_cases, "total_deaths":total_deaths, "total_cases_per_million":total_cases_per_million,
-                             "total_deaths_per_million":total_deaths_per_million, "new_cases_per_million":new_cases_per_million,
-                             "new_deaths_per_million":new_deaths_per_million, "icu_patients":icu_patients, "icu_patients_per_million":icu_patients_per_million,
-                             "hosp_patients":hosp_patients, "hosp_patients_per_million":hosp_patients_per_million, "weekly_icu_admissions":weekly_icu_admissions,
-                             "weekly_icu_admissions_per_million":weekly_icu_admissions_per_million, "weekly_hosp_admissions":weekly_hosp_admissions,
-                             "weekly_hosp_admissions_per_million":weekly_hosp_admissions_per_million, "total_tests":total_tests, "new_tests":new_tests,
-                             "total_tests_per_thousand":total_tests_per_thousand, "new_tests_per_thousand":new_tests_per_thousand, "tests_per_case":tests_per_case,
-                             "positive_rate":positive_rate,  "stringency_index":stringency_index, "population":population, "population_density":population_density,
-                             "median_age":median_age, "aged_65_older":aged_65_older, "aged_70_older":aged_70_older, "gdp_per_capita":gdp_per_capita, "extreme_poverty":extreme_poverty,
-                             "cardiovasc_death_rate":cardiovasc_death_rate, "diabetes_prevalence":diabetes_prevalence, "handwashing_facilities":handwashing_facilities,
-                             "hospital_beds_per_thousand":hospital_beds_per_thousand, "life_expectancy":life_expectancy, "human_development_index":human_development_index}
+                    args = {"date_id": date_id, "country_id": country_id, "continent": continent, "submission_date": date_time_obj, "new_deaths": new_deaths, "new_cases": new_cases,
+                            "total_cases": total_cases, "total_deaths": total_deaths, "total_cases_per_million": total_cases_per_million,
+                            "total_deaths_per_million": total_deaths_per_million, "new_cases_per_million": new_cases_per_million,
+                            "new_deaths_per_million": new_deaths_per_million, "icu_patients": icu_patients, "icu_patients_per_million": icu_patients_per_million,
+                            "hosp_patients": hosp_patients, "hosp_patients_per_million": hosp_patients_per_million, "weekly_icu_admissions": weekly_icu_admissions,
+                            "weekly_icu_admissions_per_million": weekly_icu_admissions_per_million, "weekly_hosp_admissions": weekly_hosp_admissions,
+                            "weekly_hosp_admissions_per_million": weekly_hosp_admissions_per_million, "total_tests": total_tests, "new_tests": new_tests,
+                            "total_tests_per_thousand": total_tests_per_thousand, "new_tests_per_thousand": new_tests_per_thousand, "tests_per_case": tests_per_case,
+                            "positive_rate": positive_rate, "stringency_index": stringency_index, "population": population, "population_density": population_density,
+                            "median_age": median_age, "aged_65_older": aged_65_older, "aged_70_older": aged_70_older, "gdp_per_capita": gdp_per_capita, "extreme_poverty": extreme_poverty,
+                            "cardiovasc_death_rate": cardiovasc_death_rate, "diabetes_prevalence": diabetes_prevalence, "handwashing_facilities": handwashing_facilities,
+                            "hospital_beds_per_thousand": hospital_beds_per_thousand, "life_expectancy": life_expectancy, "human_development_index": human_development_index}
                     conn.execute(self.insert_world_fact, args)
-
 
     def execute_query(self, conn, query, param):
         result = conn.execute(query, param)
         if result.rowcount > 0:
-                row = result.fetchone()
-                return row[0]
+            row = result.fetchone()
+            return row[0]
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@ import pandas as pd
 price_config = {
     "housing_mid_tier": "http://files.zillowstatic.com/research/public_v2/zhvi/City_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_mon.csv",
     "housing_top_tier": "http://files.zillowstatic.com/research/public_v2/zhvi/City_zhvi_uc_sfrcondo_tier_0.67_1.0_sm_sa_mon.csv",
-     "housing_bottom_tier": "http://files.zillowstatic.com/research/public_v2/zhvi/City_zhvi_uc_sfrcondo_tier_0.0_0.33_sm_sa_mon.csv",
+    "housing_bottom_tier": "http://files.zillowstatic.com/research/public_v2/zhvi/City_zhvi_uc_sfrcondo_tier_0.0_0.33_sm_sa_mon.csv",
     "housing_single_family": "http://files.zillowstatic.com/research/public_v2/zhvi/City_zhvi_uc_sfr_tier_0.33_0.67_sm_sa_mon.csv",
     "housing_condo": "http://files.zillowstatic.com/research/public_v2/zhvi/City_zhvi_uc_condo_tier_0.33_0.67_sm_sa_mon.csv",
     "housing_1_bd": "http://files.zillowstatic.com/research/public_v2/zhvi/City_zhvi_bdrmcnt_1_uc_sfrcondo_tier_0.33_0.67_sm_sa_mon.csv",
