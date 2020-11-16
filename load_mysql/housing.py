@@ -51,15 +51,15 @@ class Housing:
 
         df = df.replace(np.nan, "", regex=True)
 
-        with engine.connect() as conn:
-            for i in range(df.shape[0]):
+
+        for i in range(df.shape[0]):
+            with engine.connect() as conn:
                 state = df.iloc[i]["StateName"]
                 region_name = df.iloc[i]["RegionName"]
                 region_type = df.iloc[i]["RegionType"]
                 if state == "":
                     continue
 
-                print(df.iloc[0][9])
                 if region_type == "City":
                     metro = df.iloc[i]["Metro"]
                     county_name = df.iloc[i]["CountyName"]
@@ -149,38 +149,135 @@ class Housing:
             row = result.fetchone()
             return row[0]
 
-    '''def load_fact(self):
 
-        df = pd.read_csv(file)
-        columns = df.columns
-        
-        df = df.replace(np.nan, "", regex=True)
+    def create_normalized_fact(self):
+        df = pd.read_sql("""
+            SELECT  city_id, metro_id, date_id, inventory_date, state_id, county_id, mid_tier, top_tier, bottom_tier, single_family, condo,
+            1bd_room, 2db_room, 3bd_room, 4bd_room, 5bd_room
+            FROM home_prices_fact
+            ORDER BY id
+            """, con=engine,index_col=None,chunksize = 1000)
 
-        with engine.connect() as conn:
-            for i in range(df.shape[0]):
-                state = df.iloc[i]["StateName"]
+        for dat_frame in df:
+            insert_list = []
+            for i in range(dat_frame.shape[0]):
+                insert_val = {}
+                insert_val["city_id"] = dat_frame.iloc[i][0]
+                insert_val["metro_id"] = dat_frame.iloc[i][1]
+                insert_val["date_id"] = dat_frame.iloc[i][2]
+                insert_val["inventory_date"] = dat_frame.iloc[i][3]
+                insert_val["state_id"] =dat_frame.iloc[i][4]
+                insert_val["county_id"] =dat_frame.iloc[i][5]
+                insert_val["inventory_type"] = "mid_tier"
+                insert_val["price"] = dat_frame.iloc[i][6]
+                insert_list.append(insert_val)
 
-                region_name = df.iloc[i]["RegionName"]
-                region_type = df.iloc[i]["RegionType"]
+                insert_val1 = {}
+                insert_val1["city_id"] = dat_frame.iloc[i][0]
+                insert_val1["metro_id"] = dat_frame.iloc[i][1]
+                insert_val1["date_id"] = dat_frame.iloc[i]["date_id"]
+                insert_val1["inventory_date"] = dat_frame.iloc[i][3]
+                insert_val1["state_id"] =dat_frame.iloc[i][4]
+                insert_val1["county_id"] =dat_frame.iloc[i][5]
+                insert_val1["inventory_type"] = "top_tier"
+                insert_val1["price"] = dat_frame.iloc[i][7]
+                insert_list.append(insert_val1)
 
-                print(df.iloc[0][9])
-                if region_type == "City":
-                    metro = df.iloc[i]["Metro"]
-                    county_name = df.iloc[i]["CountyName"]
-                    conn.execute(Housing.city_dim_query, (region_name, region_name))
-                    conn.execute(Housing.county_dim_query, (county_name, county_name))
-                else:
-                    metro = region_name
-                conn.execute(Housing.metro_dim_query, (metro, metro))
+                insert_val2 = {}
+                insert_val2["city_id"] = dat_frame.iloc[i][0]
+                insert_val2["metro_id"] = dat_frame.iloc[i][1]
+                insert_val2["date_id"] = dat_frame.iloc[i]["date_id"]
+                insert_val2["inventory_date"] = dat_frame.iloc[i][3]
+                insert_val2["state_id"] =dat_frame.iloc[i][4]
+                insert_val2["county_id"] =dat_frame.iloc[i][5]
+                insert_val2["inventory_type"] = "bottom_tier"
+                insert_val2["price"] = dat_frame.iloc[i][8]
+                insert_list.append(insert_val2)
 
-            for j in range(9, df.shape[1], 1):
-                date = columns[j]
+                insert_val3 = {}
+                insert_val3["city_id"] = dat_frame.iloc[i][0]
+                insert_val3["metro_id"] = dat_frame.iloc[i][1]
+                insert_val3["date_id"] = dat_frame.iloc[i]["date_id"]
+                insert_val3["inventory_date"] = dat_frame.iloc[i][3]
+                insert_val3["state_id"] =dat_frame.iloc[i][4]
+                insert_val3["county_id"] =dat_frame.iloc[i][5]
+                insert_val3["inventory_type"] = "single_family"
+                insert_val3["price"] = dat_frame.iloc[i][9]
+                insert_list.append(insert_val3)
 
-                date_time_obj = datetime.datetime.strptime(date, '%Y-%m-%d')
-                date_args = (date_time_obj.month, date_time_obj.year, date_time_obj.month, date_time_obj.year)
-                conn.execute(Housing.date_dim_query, date_args)'''
+                insert_val4 = {}
+                insert_val4["city_id"] = dat_frame.iloc[i][0]
+                insert_val4["metro_id"] = dat_frame.iloc[i][1]
+                insert_val4["date_id"] = dat_frame.iloc[i]["date_id"]
+                insert_val4["inventory_date"] = dat_frame.iloc[i][3]
+                insert_val4["state_id"] =dat_frame.iloc[i][4]
+                insert_val4["county_id"] =dat_frame.iloc[i][5]
+                insert_val4["inventory_type"] = "condo"
+                insert_val4["price"] = dat_frame.iloc[i][10]
+                insert_list.append(insert_val4)
+
+                insert_val5 = {}
+                insert_val5["city_id"] = dat_frame.iloc[i][0]
+                insert_val5["metro_id"] = dat_frame.iloc[i][1]
+                insert_val5["date_id"] = dat_frame.iloc[i]["date_id"]
+                insert_val5["inventory_date"] = dat_frame.iloc[i][3]
+                insert_val5["state_id"] =dat_frame.iloc[i][4]
+                insert_val5["county_id"] =dat_frame.iloc[i][5]
+                insert_val5["inventory_type"] = "1bd"
+                insert_val5["price"] = dat_frame.iloc[i][11]
+                insert_list.append(insert_val5)
+
+                insert_val6 = {}
+                insert_val6["city_id"] = dat_frame.iloc[i][0]
+                insert_val6["metro_id"] = dat_frame.iloc[i][1]
+                insert_val6["date_id"] = dat_frame.iloc[i]["date_id"]
+                insert_val6["inventory_date"] = dat_frame.iloc[i][3]
+                insert_val6["state_id"] =dat_frame.iloc[i][4]
+                insert_val6["county_id"] =dat_frame.iloc[i][5]
+                insert_val6["inventory_type"] = "2bd"
+                insert_val6["price"] = dat_frame.iloc[i][12]
+                insert_list.append(insert_val6)
+
+                insert_val7 = {}
+                insert_val7["city_id"] = dat_frame.iloc[i][0]
+                insert_val7["metro_id"] = dat_frame.iloc[i][1]
+                insert_val7["date_id"] = dat_frame.iloc[i]["date_id"]
+                insert_val7["inventory_date"] = dat_frame.iloc[i][3]
+                insert_val7["state_id"] =dat_frame.iloc[i][4]
+                insert_val7["county_id"] =dat_frame.iloc[i][5]
+                insert_val7["inventory_type"] = "3bd"
+                insert_val7["price"] = dat_frame.iloc[i][13]
+                insert_list.append(insert_val7)
+
+                insert_val8 = {}
+                insert_val8["city_id"] = dat_frame.iloc[i][0]
+                insert_val8["metro_id"] = dat_frame.iloc[i][1]
+                insert_val8["date_id"] = dat_frame.iloc[i]["date_id"]
+                insert_val8["inventory_date"] = dat_frame.iloc[i][3]
+                insert_val8["state_id"] =dat_frame.iloc[i][4]
+                insert_val8["county_id"] =dat_frame.iloc[i][5]
+                insert_val8["inventory_type"] = "4bd"
+                insert_val8["price"] = dat_frame.iloc[i][14]
+                insert_list.append(insert_val8)
+
+                insert_val9 = {}
+                insert_val9["city_id"] = dat_frame.iloc[i][0]
+                insert_val9["metro_id"] = dat_frame.iloc[i][1]
+                insert_val9["date_id"] = dat_frame.iloc[i]["date_id"]
+                insert_val9["inventory_date"] = dat_frame.iloc[i][3]
+                insert_val9["state_id"] =dat_frame.iloc[i][4]
+                insert_val9["county_id"] =dat_frame.iloc[i][5]
+                insert_val9["inventory_type"] = "5bd"
+                insert_val9["price"] = dat_frame.iloc[i][15]
+                insert_list.append(insert_val9)
+            data_fr = pd.DataFrame(insert_list)
+            data_fr.drop_duplicates(subset=['city_id', 'metro_id', 'date_id', 'state_id', 'county_id','inventory_type'], keep='first', inplace=True, ignore_index=False)
+            data_fr.to_sql('home_prices_normalized_fact', con = engine, if_exists = 'append',chunksize = 1000, index= False)
+
+
 
 
 if __name__ == "__main__":
     housing = Housing()
-    housing.load_dimensions()
+   # housing.load_dimensions()
+    housing.create_normalized_fact()

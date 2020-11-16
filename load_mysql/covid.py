@@ -16,9 +16,17 @@ class covid:
     select_date_dim_query = """SELECT id from covid_date_dim where day=%s and month=%s and year=%s """
     insert_usa_fact = text("""INSERT into covid_usa_fact( date_id, state_id, submit_date, new_deaths, new_cases, total_cases, total_deaths) 
     VALUES( :date_id, :state_id, :submit_date, :new_deaths, :new_cases, :total_cases, :total_deaths)""")
-    insert_world_fact = text("""INSERT INTO covid_world_fact( date_id, country_id, continent, submission_date, new_deaths, new_cases, total_cases, total_deaths, total_cases_per_million, total_deaths_per_million, new_cases_per_million, new_deaths_per_million, icu_patients, icu_patients_per_million, hosp_patients, hosp_patients_per_million, weekly_icu_admissions, weekly_icu_admissions_per_million, weekly_hosp_admissions, weekly_hosp_admissions_per_million, total_tests, new_tests, total_tests_per_thousand, new_tests_per_thousand, tests_per_case, positive_rate,  stringency_index, population, population_density, median_age, aged_65_older, aged_70_older, gdp_per_capita, extreme_poverty, cardiovasc_death_rate, diabetes_prevalence, handwashing_facilities, hospital_beds_per_thousand, life_expectancy, human_development_index)
+    insert_world_fact = text("""INSERT INTO covid_world_fact( date_id, country_id, continent, submission_date, new_deaths, new_cases, total_cases, total_deaths, total_cases_per_million, 
+    total_deaths_per_million, new_cases_per_million, new_deaths_per_million, icu_patients, icu_patients_per_million, hosp_patients, hosp_patients_per_million, weekly_icu_admissions, 
+    weekly_icu_admissions_per_million, weekly_hosp_admissions, weekly_hosp_admissions_per_million, total_tests, new_tests, total_tests_per_thousand, new_tests_per_thousand, tests_per_case,
+     positive_rate,  stringency_index, population, population_density, median_age, aged_65_older, aged_70_older, gdp_per_capita, extreme_poverty, cardiovasc_death_rate, diabetes_prevalence, handwashing_facilities, hospital_beds_per_thousand, life_expectancy, human_development_index)
     VALUES( :date_id, :country_id, :continent, :submission_date, :new_deaths, :new_cases, :total_cases, :total_deaths, :total_cases_per_million, :total_deaths_per_million, :new_cases_per_million, :new_deaths_per_million, :icu_patients, :icu_patients_per_million, :hosp_patients, :hosp_patients_per_million, :weekly_icu_admissions, :weekly_icu_admissions_per_million, :weekly_hosp_admissions, :weekly_hosp_admissions_per_million, :total_tests, :new_tests, :total_tests_per_thousand, :new_tests_per_thousand, :tests_per_case, :positive_rate,  :stringency_index, :population, :population_density, :median_age, :aged_65_older, :aged_70_older, :gdp_per_capita, :extreme_poverty, :cardiovasc_death_rate, :diabetes_prevalence, :handwashing_facilities, :hospital_beds_per_thousand, :life_expectancy, :human_development_index)""")
-
+    covid_monthly_avg_country='''SELECT  c.country_name AS country,d.month AS month,d.year AS year,avg(cd.new_cases_per_million) AS avg_new_cases,
+         avg(cd.new_deaths_per_million) as avg_new_deaths,cd.total_cases_per_million as total_cases_per_million, cd.total_deaths_per_million as total_deaths_per_million,cd.new_tests_per_thousand, 
+         rank()  over(partition BY d.month,d.year ORDER BY AVG(cd.new_cases_per_million)  ) AS ranking 
+         FROM covid_world_normalized_fact cd
+         INNER JOIN covid_economy_impact.country_dim c ON cd.country_id = c.id
+         INNER JOIN covid_economy_impact.covid_date_dim d on d.id = cd.date_id GROUP BY country,month'''
     def load_data(self):
         for key in CovidData.covid_config:
             self.fill_tables("../datasets/" + key + ".csv", key)
@@ -30,6 +38,11 @@ class covid:
         print(columns)
         print(df.shape)
         df = df.replace(np.nan, 0, regex=True)
+        if key == "covid_us_data":
+            df.drop_duplicates(keep='first', inplace=True, ignore_index=False)
+        else:
+            df.drop_duplicates( keep='first', inplace=True, ignore_index=False)
+        print(df.shape)
 
         for i in range(df.shape[0]):
             with engine.connect() as conn:
@@ -48,6 +61,8 @@ class covid:
                         result = conn.execute(self.date_dim_query, (date_args))
                         date_id = result.lastrowid
                     state_id = self.execute_query(conn, covid.select_state, (state))
+
+
                     result = conn.execute(self.select_usa_fact, (date_id, state_id))
                     if result.rowcount > 0:
                         continue
@@ -142,8 +157,53 @@ class covid:
         if result.rowcount > 0:
             row = result.fetchone()
             return row[0]
+        else:
+            print(param)
+
+    def create_normalized_facts(self):
+        df = pd.read_sql("""
+            SELECT date_id, country_id,  submission_date, new_deaths, new_cases, total_cases, total_deaths, total_cases_per_million, 
+                total_deaths_per_million, new_cases_per_million, new_deaths_per_million, icu_patients, icu_patients_per_million, hosp_patients, hosp_patients_per_million, weekly_icu_admissions, 
+                weekly_icu_admissions_per_million, weekly_hosp_admissions, weekly_hosp_admissions_per_million, total_tests, new_tests, total_tests_per_thousand, new_tests_per_thousand, tests_per_case,
+                 positive_rate,  stringency_index
+            FROM covid_world_fact
+            ORDER BY id
+            """, con=engine, index_col=None, chunksize=1000)
+
+        for dat_frame in df:
+            print(dat_frame.shape)
+            dat_frame.drop_duplicates(subset=['date_id','country_id'], keep='first', inplace=True, ignore_index=False)
+            dat_frame.to_sql('covid_world_normalized_fact', con=engine, if_exists='append', chunksize=1000, index=id)
+
+    def create_country_dim(self):
+        df = pd.read_sql("""
+            SELECT DISTINCT country_id, continent,   population, population_density, median_age, 
+            aged_65_older, aged_70_older, gdp_per_capita, extreme_poverty, cardiovasc_death_rate,
+            diabetes_prevalence, handwashing_facilities, hospital_beds_per_thousand, life_expectancy, 
+            human_development_index
+            FROM covid_world_fact
+            ORDER BY country_id
+            """, con=engine, index_col=None, chunksize=1000)
+
+        for dat_frame in df:
+            print(dat_frame.shape)
+            try:
+                dat_frame.to_sql('country_details_dim', con=engine, if_exists='append', chunksize=1000, index=False)
+            except Exception as ex:
+                print(ex)
+
+    def covid_monthly_table(self):
+        df = pd.read_sql(self.covid_monthly_avg_country, con=engine, index_col= None)
+        df.to_sql('covid_monthly_avg_table', con = engine, if_exists = 'append', index= id)
 
 
 if __name__ == "__main__":
     covid = covid()
+
     covid.load_data()
+    covid.create_country_dim()
+    covid.create_normalized_facts()
+    try:
+        covid.covid_monthly_table()
+    except Exception as ex:
+        print(ex)

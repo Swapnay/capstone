@@ -17,6 +17,81 @@ CREATE TABLE country_dim
 
 )ENGINE=InnoDB;
 
+CREATE TABLE country_details_dim
+(
+    country_id BIGINT UNSIGNED unique,
+    continent VARCHAR(20),
+    population BIGINT,
+    population_density FLOAT,
+    median_age FLOAT,
+    aged_65_older FLOAT,
+    aged_70_older FLOAT,
+    gdp_per_capita FLOAT,
+    extreme_poverty FLOAT,
+    cardiovasc_death_rate FLOAT,
+    diabetes_prevalence FLOAT,
+    handwashing_facilities FLOAT,
+    hospital_beds_per_thousand FLOAT,
+    life_expectancy FLOAT,
+    human_development_index FLOAT,
+    FOREIGN KEY(country_id) REFERENCES country_dim(id)
+
+
+)ENGINE=InnoDB;
+
+CREATE TABLE covid_world_normalized_fact
+(
+    id SERIAL PRIMARY KEY,
+    date_id BIGINT UNSIGNED,
+    country_id BIGINT UNSIGNED,
+    submission_date TIMESTAMP NOT NULL,
+    new_deaths INT,
+    new_cases INT,
+    total_cases BIGINT,
+    total_deaths BIGINT,
+    total_cases_per_million FLOAT,
+    total_deaths_per_million FLOAT,
+    new_cases_per_million FLOAT,
+    new_deaths_per_million FLOAT,
+    icu_patients INT,
+    icu_patients_per_million FLOAT,
+    hosp_patients INT,
+    hosp_patients_per_million FLOAT,
+    weekly_icu_admissions INT,
+    weekly_icu_admissions_per_million FLOAT,
+    weekly_hosp_admissions INT,
+    weekly_hosp_admissions_per_million FLOAT,
+    total_tests BIGINT,
+    new_tests INT,
+    total_tests_per_thousand FLOAT,
+    new_tests_per_thousand FLOAT,
+    tests_per_case FLOAT,
+    positive_rate FLOAT,
+    tests_units BIGINT,
+    stringency_index FLOAT,
+    FOREIGN KEY (date_id) REFERENCES covid_date_dim(id),
+    FOREIGN KEY (country_id) REFERENCES country_dim(id),
+    UNIQUE(date_id, country_id)
+)ENGINE=InnoDB;
+CREATE TABLE covid_monthly_avg_table
+(
+    id SERIAL PRIMARY KEY,
+    country VARCHAR(50) NOT NULL,
+    month TINYint NOT NULL,
+    year INT NOT NULL,
+    avg_new_cases FLOAT,
+    avg_new_deaths FLOAT,
+    total_cases_per_million FLOAT,
+    total_deaths_per_million FLOAt,
+    new_tests_per_thousand FLOAT,
+    ranking INT,
+    UNIQUE(country, month,year)
+)ENGINE=InnoDB;
+
+
+
+
+
 
 
 CREATE TABLE covid_world_fact
@@ -69,7 +144,7 @@ CREATE TABLE covid_world_fact
 CREATE TABLE state_dim
 (
     id SERIAL PRIMARY KEY,
-    code VARCHAR(2),
+    code VARCHAR(3),
     name VARCHAR(50)
 
 )ENGINE=InnoDB;
@@ -85,7 +160,8 @@ CREATE TABLE covid_usa_fact
     total_cases INT,
     total_deaths INT,
     FOREIGN KEY (date_id) REFERENCES covid_date_dim(id),
-    FOREIGN KEY (state_id) REFERENCES state_dim(id)
+    FOREIGN KEY (state_id) REFERENCES state_dim(id),
+    UNIQUE (date_id,state_id)
 )ENGINE=InnoDB;
 
 
@@ -148,6 +224,8 @@ insert into state_dim (code,name) values ('WA','Washington');
 insert into state_dim (code,name) values ('WV','West Virginia');
 insert into state_dim (code,name) values ('WI','Wisconsin');
 insert into state_dim (code,name) values ('WY','Wyoming');
+insert into state_dim (code,name) values ('RMI','THE REPUBLIC OF THE MARSHALL ISLANDS');
+insert into state_dim (code,name) values ('NYC','New York');
 
 /*countries*/
 

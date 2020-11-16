@@ -26,4 +26,16 @@ CREATE TABLE stock_prices_fact
     FOREIGN KEY (stock_id) REFERENCES stocks_dim(id)
 
 )ENGINE=InnoDB;
+CREATE TABLE stocks_monthly_avg_return
+(
+    id SERIAL PRIMARY KEY,
+    symbol VARCHAR(10) NOT NULL,
+    category_name VARCHAR(40) NOT NULL,
+    year INT NOT NULL,
+    month TiNYINT,
+    return_rate FLOAT,
+    cosing_price FLOAT,
+    UNIQUE(symbol, month,year)
+)ENGINE=InnoDB;
+
 

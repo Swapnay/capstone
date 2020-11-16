@@ -1,4 +1,5 @@
 USE covid_economy_impact;
+drop table unemployment_by_race_fact;
 CREATE TABLE unemployment_by_race_fact
 (
     id SERIAL PRIMARY KEY,
@@ -23,9 +24,11 @@ CREATE TABLE unemployment_by_race_fact
     asian_participated_rate  DECIMAL(4,2),
     asian_unemployed MEDIUMINT,
     asian_unemployed_rate  DECIMAL(4,2),
+    submission_date TIMESTAMP NOT NULL,
     FOREIGN KEY (date_id) REFERENCES housing_date_dim(id)
 )ENGINE=InnoDB;
 
+drop table unemployment_by_education_level_fact;
 CREATE TABLE unemployment_by_education_level_fact
 (
     id SERIAL PRIMARY KEY,
@@ -46,12 +49,11 @@ CREATE TABLE unemployment_by_education_level_fact
     bachelors_or_higher_college_associate_participated_rate  DECIMAL(4,2),
     bachelors_or_higher_college_associate_unemployed MEDIUMINT,
     bachelors_or_higher_college_associate_unemployed_rate  DECIMAL(4,2),
+    submission_date TIMESTAMP NOT NULL,
     FOREIGN KEY (date_id) REFERENCES housing_date_dim(id)
 )ENGINE=InnoDB;
-INSERT INTO unemployment_by_education_level_fact( date_id, less_than_high_school_participated, less_than_high_school_participated_rate, less_than_high_school_unemployed, less_than_high_school_unemployed_rate, high_school_grad_participated, high_school_grad_participated_rate, high_school_grad_unemployed, high_school_grad_unemployed_rate, some_college_associate_participated, some_college_associate_participated_rate, some_college_associate_unemployed, some_college_associate_unemployed_rate, bachelors_or_higher_college_associate_participated, bachelors_or_higher_college_associate_participated_rate, bachelors_or_higher_college_associate_unemployed, bachelors_or_higher_college_associate_unemployed_rate)
-VALUES( :date_id, :less_than_high_school_participated, :less_than_high_school_participated_rate, :less_than_high_school_unemployed, :less_than_high_school_unemployed_rate, :high_school_grad_participated, :high_school_grad_participated_rate, :high_school_grad_unemployed, :high_school_grad_unemployed_rate, :some_college_associate_participated, :some_college_associate_participated_rate, :some_college_associate_unemployed, :some_college_associate_unemployed_rate, :bachelors_or_higher_college_associate_participated, :bachelors_or_higher_college_associate_participated_rate, :bachelors_or_higher_college_associate_unemployed, :bachelors_or_higher_college_associate_unemployed_rate)
 
-
+drop table unemployment_by_industry_fact;
 CREATE TABLE unemployment_by_industry_fact
 (
     id SERIAL PRIMARY KEY,
@@ -74,5 +76,79 @@ CREATE TABLE unemployment_by_industry_fact
     leisure_hospitality_rate DECIMAL(4,2),
     agriculture_related MEDIUMINT,
     agriculture_related_rate DECIMAL(4,2),
+    submission_date TIMESTAMP NOT NULL,
     FOREIGN KEY (date_id) REFERENCES housing_date_dim(id)
 )ENGINE=InnoDB;
+drop table unemployment_by_race_normalized_fact;
+CREATE TABLE unemployment_by_race_normalized_fact
+(
+    id SERIAL PRIMARY KEY,
+    date_id BIGINT UNSIGNED,
+    race_type ENUM('white','african american','asian','hispanic'),
+    civilian_noninstitutional MEDIUMINT,
+    participated  MEDIUMINT,
+    participated_rate  DECIMAL(4,2),
+    unemployed MEDIUMINT,
+    unemployed_rate  DECIMAL(4,2),
+    submission_date TIMESTAMP NOT NULL,
+    FOREIGN KEY (date_id) REFERENCES housing_date_dim(id),
+    UNIQUE(date_id,race_type)
+)ENGINE=InnoDB;
+
+drop table unemployment_by_education_level_normalized_fact;
+CREATE TABLE unemployment_by_education_level_normalized_fact
+(
+    id SERIAL PRIMARY KEY,
+    date_id BIGINT UNSIGNED,
+    education ENUM('less than high school', 'high school grad','some college associate',
+    'bachelors or higher college associate'),
+    participated  MEDIUMINT,
+    participated_rate  DECIMAL(4,2),
+    unemployed MEDIUMINT,
+    unemployed_rate  DECIMAL(4,2),
+    submission_date TIMESTAMP NOT NULL,
+    FOREIGN KEY (date_id) REFERENCES housing_date_dim(id),
+    UNIQUE(date_id,education)
+)ENGINE=InnoDB;
+
+CREATE TABLE unemployment_rate_by_state_fact
+(
+    id SERIAL PRIMARY KEY,
+    date_id BIGINT UNSIGNED,
+    state_id BIGINT UNSIGNED,
+    unemployment_rate DECIMAL(4,2),
+    submission_date TIMESTAMP NOT NULL,
+    FOREIGN KEY (date_id) REFERENCES housing_date_dim(id),
+    FOREIGN KEY (state_id) REFERENCES state_dim(id),
+    UNIQUE(date_id,state_id)
+)ENGINE=InnoDB;
+
+
+CREATE TABLE unemployment_by_industry_normalized_fact
+(
+    id SERIAL PRIMARY KEY,
+    date_id BIGINT UNSIGNED,
+    industry_type ENUM('total','construction','manufacturing','whole sale trade',
+    'transportation and utilities', 'professional business', 'education health care',
+    'leisure hospitality', 'agriculture related' ),
+    unemployment MEDIUMINT,
+    unemployment_rate DECIMAL(4,2),
+    submission_date TIMESTAMP NOT NULL,
+    FOREIGN KEY (date_id) REFERENCES housing_date_dim(id),
+    UNIQUE(date_id,industry_type)
+)ENGINE=InnoDB;
+
+
+CREATE TABLE unemployment_series__dim
+(
+    id SERIAL PRIMARY KEY,
+    area_type_code varchar(2) ,
+    area_code VARCHAR (15),
+    area_text VARCHAR (100),
+    display_level TINYINT,
+    selectable varchar(1),
+    sort_sequence INT,
+    UNIQUE(area_code)
+)ENGINE=InnoDB;
+
+
