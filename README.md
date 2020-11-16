@@ -281,6 +281,9 @@ housing_data.to_csv("../datasets/housing_usa.csv")
 ```
 
 ## 4. Data model
-Using star schema
+Using star schema.Data model is [here](https://github.com/Swapnay/capstone/tree/master/data_model/erd)
+
+## 5. Data Exploration
+[Here](https://github.com/Swapnay/capstone/blob/master/eda/Covid_Economy_impact.ipynb)
 ## References
 [Reference1](https://www.uaex.edu/life-skills-wellness/health/covid19/COVID-Economic_Impacts_in_Arkansas.aspx)
