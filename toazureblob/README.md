@@ -1,4 +1,4 @@
-# Banking System Template
+# Spark Cluster
 
 This is a project can be used to run a basic flask app with MySQL as DB using docker-compose.
 
