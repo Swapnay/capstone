@@ -38,7 +38,7 @@ cd capstone
 6.Shutdown the cluster and clean up: ```docker-compose down```
 
 **Step 4:** Run
-```docker run --rm -it --network azurespark_spark-network swapna/spark:latest /bin/sh```
+```docker run --rm -it --network azurespark_spark-network swapna/spark:latest bash```
  Change start_script to reflect storage account name, key and container name.
  ```./start_script ```
 ## Running the tests
