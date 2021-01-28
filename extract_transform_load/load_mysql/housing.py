@@ -3,7 +3,7 @@ from dbconfig import engine
 from sqlalchemy import text
 import numpy as np
 import datetime
-from extract.housing_data import price_config, inventory_metro_config
+from extract_transform_load.extract.housing_data import price_config, inventory_metro_config
 
 
 class Housing:

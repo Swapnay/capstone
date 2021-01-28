@@ -1,7 +1,7 @@
 from sqlalchemy import text
 import numpy as np
 import datetime
-from extract.covid_data import CovidData
+from extract_transform_load.extract.covid_data import CovidData
 import pandas as pd
 from dbconfig import engine
 
