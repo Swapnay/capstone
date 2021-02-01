@@ -2,7 +2,7 @@
 from pyspark.sql import SparkSession
 from pyspark import SparkFiles
 import os
-from sparktasks.db.DBUtils import DButils
+from spark.app.sparktasks.utils.DBUtils import DButils
 import configparser
 from pathlib import Path
 import logging
@@ -14,23 +14,6 @@ from pyspark.sql.functions import year, month, dayofmonth
 
 def convert_to_date(dateTimeStr):
     return datetime.strptime(dateTimeStr, '%m/%d/%Y')
-
-
-def get_date_id(df, dateTimeStr):
-    date_time_obj = datetime.strptime(dateTimeStr, '%m/%d/%Y')
-    print(date_time_obj)
-    # date_args = {"day": date_time_obj.day, "month": date_time_obj.month, "year": date_time_obj.year}
-    # query = 'select id from date_dim WHERE day={} AND month={} AND year={}'.format(date_time_obj.day,date_time_obj.month,date_time_obj.year)
-    # date_id_df = date_df.filter(F.col("day")==date_time_obj.day & F.col("month") == date_time_obj.month & F.col("year") == date_time_obj.year ).select("id")
-    # print()
-    # pd_df = globals()['pd_df']
-    try:
-        date_id = df[(df.day == date_time_obj.day) & (df.month == date_time_obj.month) & (df.year == date_time_obj.year)].iloc[0]["id"]
-        return date_id
-    except Exception as ex:
-        print(dateTimeStr)
-        print(ex)
-        return 1
 
 
 def get_state_id(df, code):
@@ -46,7 +29,7 @@ def get_state_id(df, code):
 
 
 class Covid19etl:
-    logger = logging.getLogger('sparktasks.covid.AccountDao')
+    logger = logging.getLogger('sparktasks.covid.Covid19etl')
     config = configparser.RawConfigParser()
     print(os.path.dirname(os.path.abspath(__file__)))
     print(os.path.abspath(__file__))
@@ -57,7 +40,7 @@ class Covid19etl:
 
     def __init__(self):
         self.DButils = DButils()
-        self.spark = SparkSession.builder.appName('Extract').getOrCreate()
+        self.spark = SparkSession.builder.appName('Extract_Covid').getOrCreate()
         self.date_dim_df = self.DButils.load_from_db(self.spark, Covid19etl.config.get('DIMS', 'DATE_DIM'))
         self.date_dim_df.createGlobalTempView("date_dim")
         global pd_date_df
@@ -127,8 +110,7 @@ class Covid19etl:
         state_udf = udf(lambda d: get_state_id(df_state, d), IntegerType())
         df = globals()['pd_date_df']
 
-        df1 = df[(df.day == 4) & (df.month == 4) & (df.year == 2020)].iloc[0]["id"]
-        date_id_udf = udf(lambda d: get_date_id(df, d), IntegerType())
+
         '''.withColumn("state",state_udf(usa_df.state)) 
         .withColumn("date_id",date_id_udf(usa_df.submission_date))"date_id",'''
 
