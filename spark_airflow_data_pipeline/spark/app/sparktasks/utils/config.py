@@ -1,12 +1,11 @@
 import configparser
-from pathlib import Path
 import os
-import logging
 
 
 class Config:
     config = configparser.RawConfigParser()
-    config.read_file(open("../config.cfg"))
+    imperial_path ="/Users/syeruvala/Exercism/python/capstone_final_pipeline/spark_airflow_data_pipeline/spark" #/usr/local/spark/app"
+    config.read_file(open(os.path.join(imperial_path, "app", "sparktasks", "config.cfg")))  # "/usr/local/spark/app/sparktasks/config.cfg"))
 
     @property
     def mysql_user(self):
@@ -34,7 +33,7 @@ class Config:
 
     @property
     def connection_str_jdbc(self):
-        return 'jdbc:mysql://{}:{}/{}?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true'.format(self.mysql_host, self.mysql_port, self.mysql_db_name)
+        return 'jdbc:mysql://{}:{}/{}?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&serverTimezone=UTC'.format(self.mysql_host, self.mysql_port, self.mysql_db_name)
 
     @property
     def covid19_source(self):
@@ -48,20 +47,102 @@ class Config:
     def housing_inventory(self):
         return self.config.items('HOUSING_INVENTORY')
 
+    @property
+    def employment(self):
+        return self.config.items('UNEMPLOYMENT')
 
-    def get_by_type(self,sector_type):
+    @property
+    def stocks(self):
+        return self.config.items('STOCKS')
+
+    @property
+    def state_dim(self):
+        return self.config.get('DIMS', 'STATE_DIM')
+
+    @property
+    def date_dim(self):
+        return self.config.get('DIMS', 'DATE_DIM')
+
+    @property
+    def housing_date_dim(self):
+        return self.config.get('DIMS', 'HOUSING_DATE_DIM')
+
+    @property
+    def city_dim(self):
+        return self.config.get('DIMS', 'CITY_DIM')
+
+    @property
+    def county_dim(self):
+        return self.config.get('DIMS', 'COUNTY_DIM')
+
+    @property
+    def metro_dim(self):
+        return self.config.get('DIMS', 'METRO_DIM')
+
+    @property
+    def unemployment_series_dim(self):
+        return self.config.get('DIMS', 'UNEMPLOYMENT_SERIES_DIM')
+
+    @property
+    def stocks_dim(self):
+        return self.config.get('DIMS', 'STOCKS_DIM')
+
+    @property
+    def country_details_dim(self):
+        return self.config.get('DIMS', 'COUNTRY_DETAILS_DIM')
+
+    @property
+    def covid_world_raw(self):
+        return self.config.get('RAW', 'COVID_WORLD_DATA')
+
+    @property
+    def covid_world_sector(self):
+        return 'COVID_WORLD_DATA'.lower()
+
+    @property
+    def covid_usa_raw(self):
+        return self.config.get('RAW', 'COVID_US_DATA')
+
+    @property
+    def covid_world_fact(self):
+        return self.config.get('FACTS', 'COVID_WORLD_DATA')
+
+    @property
+    def covid_usa_sector(self):
+        return 'COVID_US_DATA'.lower()
+
+    @property
+    def covid_usa_fact(self):
+        return self.config.get('FACTS', 'COVID_US_DATA')
+
+    @property
+    def stocks_raw(self):
+        return self.config.get('RAW', 'STOCKS')
+
+    @property
+    def stocks_fact(self):
+        return self.config.get('FACTS', 'STOCKS')
+
+    @property
+    def metadata(self):
+        return self.config.get('GLOBAL', 'META_DATA_TABLE')
+
+    @property
+    def data_dir(self):
+        return os.path.join(self.imperial_path, "resources", "data")
+
+    def get_by_type(self, sector_type):
         return self.config.items(sector_type)
 
-    def get_config(self,group,key):
-        return self.config.get(group,key)
+    def get_raw_by_sector(self, sector_name):
+        return self.config.get('RAW', sector_name)
 
-    def set_config(self, group,key,value):
+    def get_config(self, group, key):
+        return self.config.get(group, key)
+
+    def set_config(self, group, key, value):
         group = self.config[group]
         group[key] = value
-        #Write changes back to file
-        with open("../config.cfg", 'w') as conf:
+        # Write changes back to file
+        with open("/sparktasks/config.cfg", 'w') as conf:
             self.config.write(conf)
-
-
-
-

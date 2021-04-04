@@ -10,4 +10,5 @@
 # #log_path.parent.mkdir(parents=True, exist_ok=True)
 #
 # logging.config.fileConfig(fname=log_conf,
-#                           defaults={'logfilename': log_path})
+#                           defaults={'logfilename': log_path},
+#                           disable_existing_loggers= False)

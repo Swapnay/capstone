@@ -1,5 +1,5 @@
 '''import logging.config
-from sparktasks.util import  PathUtil
+from spark.app.sparktasks.util import  PathUtil
 
 log_conf = PathUtil.get_empyreal_path().joinpath('sparktasks/logging.conf')
 log_path = PathUtil.get_empyreal_path().joinpath('logs').joinpath('covid_economy.log')

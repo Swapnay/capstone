@@ -1,3 +1,5 @@
 misc.txt
 dags/__pycache__
 .ipynb_checkpoints
+/spark/resources/data/
+/docker/mysql_data/

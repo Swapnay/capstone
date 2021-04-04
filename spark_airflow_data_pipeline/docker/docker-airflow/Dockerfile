@@ -131,6 +131,9 @@ ENV AZURE_CONTAINER=sb-guided-blob
 ENV PATH $PATH:/usr/local/spark/bin
 COPY config/jars/ ${SPARK_HOME}/assembly/target/scala-2.12/jars/
 #COPY config/core-site.xml  ${SPARK_HOME}/conf/
+RUN pip3 install mysql-connector-python
+RUN pip3 install mysql-connector-python-rf
+RUN pip3 install pandas_datareader
 
 ###############################
 ## Finish SPARK files and variables
@@ -139,8 +142,8 @@ COPY config/jars/ ${SPARK_HOME}/assembly/target/scala-2.12/jars/
 RUN chown -R airflow: ${AIRFLOW_HOME}
 RUN chmod +x entrypoint.sh
 ENV SPARK_DATA=/usr/local/spark/resources/data/
-COPY ../mysql-docker/mysql-initdb.d /docker-entrypoint-initdb.d/
-RUN chmod -R +x /docker-entrypoint-initdb.d
+#COPY ../mysql-docker/mysql-initdb.d /docker-entrypoint-initdb.d/
+#RUN chmod -R +x /docker-entrypoint-initdb.d
 
 EXPOSE 8080 5555 8793
 

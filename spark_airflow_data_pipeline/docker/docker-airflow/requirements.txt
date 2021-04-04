@@ -23,3 +23,6 @@ cryptography>=3.2
 pymysql==0.10.1
 mysqlclient==1.3.13
 parameterized==0.7.4
+pandas_datareader
+mysql-connector-python
+mysql-connector-python-rf

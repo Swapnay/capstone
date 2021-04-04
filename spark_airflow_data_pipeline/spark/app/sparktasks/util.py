@@ -6,5 +6,4 @@ class PathUtil:
 
     @staticmethod
     def get_empyreal_path():
-        print(os.path.dirname(os.path.abspath(__file__)))
-        return pathlib.Path(__file__).parents[1]
+        return os.path.join("usr", "local", "spark", "app")#os.path.join(os.getenv('SPARK_HOME'),"app")#"

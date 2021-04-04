@@ -19,7 +19,9 @@ CREATE TABLE country_dim
 
 CREATE TABLE country_details_dim
 (
-    country_id BIGINT UNSIGNED unique,
+    id SERIAL PRIMARY KEY,
+    iso_code VARCHAR(20) UNIQUE,
+    country_name VARCHAR(50) UNIQUE,
     continent VARCHAR(20),
     population BIGINT,
     population_density FLOAT,
@@ -33,8 +35,7 @@ CREATE TABLE country_details_dim
     handwashing_facilities FLOAT,
     hospital_beds_per_thousand FLOAT,
     life_expectancy FLOAT,
-    human_development_index FLOAT,
-    FOREIGN KEY(country_id) REFERENCES country_dim(id)
+    human_development_index FLOAT
 
 
 )ENGINE=InnoDB;
@@ -49,30 +50,27 @@ CREATE TABLE covid_world_normalized_fact
     new_cases INT,
     total_cases BIGINT,
     total_deaths BIGINT,
-    total_cases_per_million FLOAT,
-    total_deaths_per_million FLOAT,
-    new_cases_per_million FLOAT,
-    new_deaths_per_million FLOAT,
     icu_patients INT,
-    icu_patients_per_million FLOAT,
     hosp_patients INT,
-    hosp_patients_per_million FLOAT,
     weekly_icu_admissions INT,
-    weekly_icu_admissions_per_million FLOAT,
     weekly_hosp_admissions INT,
-    weekly_hosp_admissions_per_million FLOAT,
     total_tests BIGINT,
     new_tests INT,
-    total_tests_per_thousand FLOAT,
-    new_tests_per_thousand FLOAT,
     tests_per_case FLOAT,
     positive_rate FLOAT,
-    tests_units BIGINT,
+    tests_units VARCHAR(50),
+    total_vaccinations FLOAT,
+    people_vaccinated FLOAT,
+    people_fully_vaccinated FLOAT,
+    new_vaccinations FLOAT,
     stringency_index FLOAT,
     FOREIGN KEY (date_id) REFERENCES covid_date_dim(id),
-    FOREIGN KEY (country_id) REFERENCES country_dim(id),
+    FOREIGN KEY (country_id) REFERENCES country_details_dim(id),
     UNIQUE(date_id, country_id)
 )ENGINE=InnoDB;
+
+
+
 CREATE TABLE covid_monthly_avg_table
 (
     id SERIAL PRIMARY KEY,

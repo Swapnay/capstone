@@ -4,7 +4,6 @@ CREATE TABLE stocks_dim
      id SERIAL PRIMARY KEY,
      symbol VARCHAR(10) UNIQUE,
      name VARCHAR(50),
-     exchange VARCHAR(10),
      category_name VARCHAR(40)
 
 )ENGINE=InnoDB;

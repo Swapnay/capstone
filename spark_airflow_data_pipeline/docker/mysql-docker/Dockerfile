@@ -1,4 +1,4 @@
-FROM mysql:8.0.19
+FROM mysql:8.0
 
-ADD mysql-initdb.d/covid_economy_impact.sql /docker-entrypoint-initdb.d/
+ADD covid_economy_impact.sql /docker-entrypoint-initdb.d/
 RUN chmod -R +x /docker-entrypoint-initdb.d

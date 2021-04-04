@@ -57,7 +57,7 @@ CREATE TABLE home_prices_fact
     UNIQUE(city_id, metro_id, date_id, state_id, county_id)
 )ENGINE=InnoDB;
 
-CREATE TABLE home_prices_normalized_fact
+CREATE TABLE home_prices_fact
 (
     id SERIAL PRIMARY KEY,
     city_id BIGINT UNSIGNED,
