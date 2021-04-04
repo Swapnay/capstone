@@ -126,7 +126,6 @@ RUN cd "/tmp" && \
 # Create SPARK_HOME env var
 RUN export SPARK_HOME
 ENV STORAGE_ACCOUNT=covid19systorage
-ENV STORAGE_ACCOUNT_KEY="V8jDLgUH5vCjaN79z/a4eeoaOolOMi6wS8UZKr92RY9JxhWq8EttZ+865LxvkWaf8bKUYspq6JykM4ovJwy2zQ=="
 ENV AZURE_CONTAINER=sb-guided-blob
 ENV PATH $PATH:/usr/local/spark/bin
 COPY config/jars/ ${SPARK_HOME}/assembly/target/scala-2.12/jars/
