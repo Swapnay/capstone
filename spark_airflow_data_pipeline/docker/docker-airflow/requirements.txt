@@ -6,8 +6,8 @@
 #
 # pyspark is required to spark-submit works inside airflow machine
 
-celery==4.1.1
-kombu==4.2.0
+celery==4.4
+kombu==4.6.7
 tornado==5.1.1
 werkzeug==0.16.0
 pyspark==2.4

@@ -1,12 +1,12 @@
-# VERSION 1.10.2
-# AUTHOR: Thiago Cordon Rodrigues
+# VERSION 1.0
+# AUTHOR: swapna
 # DESCRIPTION: Airflow container with JAVA 8 and SPARK binaries
-# BUILD: docker build --rm -t docker-airflow-spark:latest .
-# BASED ON: https://github.com/puckel/docker-airflow
+# BUILD: docker build --rm -t airflow-spark:latest .
+# BASED ON: https://github.com/cordon-thiago/airflow-spark
 
 # stretch debian version allows JAVA JDK 8
 FROM python:3.6.9-stretch
-LABEL maintainer="cordon-thiago"
+LABEL maintainer="swapna-y"
 
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -128,7 +128,8 @@ RUN export SPARK_HOME
 ENV STORAGE_ACCOUNT=covid19systorage
 ENV AZURE_CONTAINER=sb-guided-blob
 ENV PATH $PATH:/usr/local/spark/bin
-COPY config/jars/ ${SPARK_HOME}/assembly/target/scala-2.12/jars/
+# jars to connect to
+COPY config/jars ${SPARK_HOME}/assembly/target/scala-2.12/jars/
 #COPY config/core-site.xml  ${SPARK_HOME}/conf/
 RUN pip3 install mysql-connector-python
 RUN pip3 install mysql-connector-python-rf

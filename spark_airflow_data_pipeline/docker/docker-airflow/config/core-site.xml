@@ -19,7 +19,7 @@
 <configuration>
     <property>
         <name>fs.azure.account.key.covid19systorage.blob.core.windows.net</name>
-        <value>V8jDLgUH5vCjaN79z/a4eeoaOolOMi6wS8UZKr92RY9JxhWq8EttZ+865LxvkWaf8bKUYspq6JykM4ovJwy2zQ==</value>
+        <value></value>
     </property>
     <property>
         <name>fs.wasbs.impl</name>

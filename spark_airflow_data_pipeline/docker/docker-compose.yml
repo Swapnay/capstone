@@ -2,7 +2,7 @@ version: "3.7"
 services:  
 #    # postgres used by airflow
 #    postgres:
-#        image: postgres:9.6
+#        image: psheer/postgis:12.1
 #        hostname: postgres
 #        networks:
 #            - default_net
@@ -19,7 +19,7 @@ services:
 #
 #    # airflow LocalExecutor
 #    airflow-webserver:
-#        image: docker-airflow-spark:1.10.14_2.4.7
+#        image: swapnayeruvala/spark-airflow:1.10.14_2.4.7
 #        restart: always
 #        networks:
 #            - default_net
@@ -27,8 +27,11 @@ services:
 #            - postgres
 #        environment:
 #            - LOAD_EX=n
+#            - AIRFLOW__CORE__EXECUTOR=LocalExecutor
 #            - EXECUTOR=Local
+#            - AIRFLOW__CORE__FERNET_KEY=v-STCavygWLUfWPZaSMvDwh0iIpMNxJddcvzq74Fz5c=
 #            - FERNET_KEY=v-STCavygWLUfWPZaSMvDwh0iIpMNxJddcvzq74Fz5c=
+#            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
 #        volumes:
 #            - ../dags:/usr/local/airflow/dags #DAG folder
 #            - ../spark/app:/usr/local/spark/app #Spark Scripts (Must be the same path in airflow and Spark Cluster)
@@ -156,9 +159,11 @@ services:
             - "32001:3306"
         restart: always
         environment:
+            MYSQL_USER: miadmin
+            MYSQL_PASSWORD: Mi4man11
             MYSQL_ROOT_PASSWORD: Mi4man11
             MYSQL_DATABASE: covid_economy_impact
-        networks:covid.sql
+        networks:
             - default_net
         volumes:
             - ./mysql-docker/mysql-initdb.d:/docker-entrypoint-initdb.d
