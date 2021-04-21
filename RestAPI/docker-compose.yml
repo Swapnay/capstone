@@ -1,0 +1,41 @@
+version: "3.0"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: spark_mysql1
+
+    command: '--default-authentication-plugin=mysql_native_password'
+    ports:
+      - "32001:3306"
+    restart: always
+    environment:
+      MYSQL_USER: miadmin
+      MYSQL_PASSWORD: Mi4man11
+      MYSQL_ROOT_PASSWORD: Mi4man11
+      MYSQL_DATABASE: covid_economy_impact
+    networks:
+      - default_net
+    volumes:
+      - /Users/syeruvala/Exercism/python/capstone_final_pipeline/spark_airflow_data_pipeline/docker/mysql-docker/mysql-initdb.d:/docker-entrypoint-initdb.d
+      - /Users/syeruvala/Exercism/python/capstone_final_pipeline/spark_airflow_data_pipeline/docker/mysql_data:/var/lib/mysql
+
+  rebanking:
+    image: restapp:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    networks:
+      - default_net
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://spark_mysql1:3306/covid_economy_impact?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&serverTimezone=UTC&verifyServerCertificate=false&useSSL=false&requireSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Mi4man11
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - 8080:8080
+
+networks:
+  default_net:
