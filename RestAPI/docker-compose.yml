@@ -20,8 +20,8 @@ services:
       - /Users/syeruvala/Exercism/python/capstone_final_pipeline/spark_airflow_data_pipeline/docker/mysql-docker/mysql-initdb.d:/docker-entrypoint-initdb.d
       - /Users/syeruvala/Exercism/python/capstone_final_pipeline/spark_airflow_data_pipeline/docker/mysql_data:/var/lib/mysql
 
-  rebanking:
-    image: restapp:latest
+  covid-impact-data:
+    image: covid-impact-data:latest
     build:
       context: ./
       dockerfile: Dockerfile
