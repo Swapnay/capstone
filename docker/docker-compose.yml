@@ -1,173 +1,148 @@
-version: "3.7"
-services:  
-#    # postgres used by airflow
-#    postgres:
-#        image: psheer/postgis:12.1
-#        hostname: postgres
-#        networks:
-#            - default_net
-#        volumes:
-#            # Create Test database on Postgresql
-#            - ./docker-airflow/pg-init-scripts:/docker-entrypoint-initdb.d
-#        environment:
-#            - POSTGRES_USER=airflow
-#            - POSTGRES_PASSWORD=airflow
-#            - POSTGRES_DB=airflow
-#            - ALLOW_IP_RANGE=0.0.0.0/0
-#        ports:
-#            - "5432:5432"
-#
-#    # airflow LocalExecutor
-#    airflow-webserver:
-#        image: swapnayeruvala/spark-airflow:1.10.14_2.4.7
-#        restart: always
-#        networks:
-#            - default_net
-#        depends_on:
-#            - postgres
-#        environment:
-#            - LOAD_EX=n
-#            - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-#            - EXECUTOR=Local
-#            - AIRFLOW__CORE__FERNET_KEY=v-STCavygWLUfWPZaSMvDwh0iIpMNxJddcvzq74Fz5c=
-#            - FERNET_KEY=v-STCavygWLUfWPZaSMvDwh0iIpMNxJddcvzq74Fz5c=
-#            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-#        volumes:
-#            - ../dags:/usr/local/airflow/dags #DAG folder
-#            - ../spark/app:/usr/local/spark/app #Spark Scripts (Must be the same path in airflow and Spark Cluster)
-#            - ../spark/resources/data:/usr/local/spark/resources/data #Data folder (Must be the same path in airflow and Spark Cluster)
-#        ports:
-#            - "8282:8282"
-#        command: webserver
-#        healthcheck:
-#            test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
-#            interval: 30s
-#            timeout: 30s
-#            retries: 3
-##    spark-master:
-##        image: swapna/spark:latest
-##        container_name: spark-master
-##        hostname: spark-master
-##        ports:
-##            - "8080:8080"
-##            - "7077:7077"
-##        networks:
-##            - spark_network
-##        environment:
-##            - "SPARK_LOCAL_IP=spark-master"
-##            - "SPARK_MASTER_PORT=7077"
-##            - "SPARK_MASTER_WEBUI_PORT=8080"
-##            - "MASTER_ARGS=--cores 2 --memory 3G"
-##        volumes:
-##            - ../spark/app:/usr/local/spark/app
-##            - ../spark/resources/data:/usr/local/spark/resources/data
-##        command: "/start-master.sh"
-##    spark-worker:
-##        image: swapna/spark:latest
-##        depends_on:
-##            - spark-master
-##        ports:
-##            - 8082:8082
-##        networks:
-##            - spark_network
-##        environment:
-##            - "SPARK_MASTER=spark://spark-master:7077"
-##            - "SPARK_WORKER_WEBUI_PORT=8082"
-##            - "WORKER_ARGS=--cores 2 --memory 2G"
-##        volumes:
-##            - ../spark/app:/usr/local/spark/app
-##            - ../spark/resources/data:/usr/local/spark/resources/data
-##        command: "/start-worker.sh"
-#
-##    # Spark with 3 workers
-#    spark:
-#        image: bitnami/spark:2.4.6
-#        hostname: spark
-#        networks:
-#            - default_net
-#        environment:
-#            - SPARK_MODE=master
-#            - SPARK_RPC_AUTHENTICATION_ENABLED=no
-#            - SPARK_RPC_ENCRYPTION_ENABLED=no
-#            - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-#            - SPARK_SSL_ENABLED=no
-#        volumes:
-#            - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
-#            - ../spark/resources/data:/usr/local/spark/resources/data #Data folder (Must be the same path in airflow and Spark Cluster)
-#        ports:
-#            - "8181:8080"
-#            - "7077:7077"
-#
-#
-#    spark-worker-1:
-#        image: bitnami/spark:2.4.6
-#        networks:
-#            - default_net
-#        environment:
-#            - SPARK_MODE=worker
-#            - SPARK_MASTER_URL=spark://spark:7077
-#            - SPARK_WORKER_MEMORY=1G
-#            - SPARK_WORKER_CORES=1
-#            - SPARK_RPC_AUTHENTICATION_ENABLED=no
-#            - SPARK_RPC_ENCRYPTION_ENABLED=no
-#            - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-#            - SPARK_SSL_ENABLED=no
-#        volumes:
-#            - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
-#            - ../spark/resources/data:/usr/local/spark/resources/data #Data folder (Must be the same path in airflow and Spark Cluster)
-#
-#    spark-worker-2:
-#        image: bitnami/spark:2.4.6
-#        networks:
-#            - default_net
-#        environment:
-#            - SPARK_MODE=worker
-#            - SPARK_MASTER_URL=spark://spark:7077
-#            - SPARK_WORKER_MEMORY=1G
-#            - SPARK_WORKER_CORES=1
-#            - SPARK_RPC_AUTHENTICATION_ENABLED=no
-#            - SPARK_RPC_ENCRYPTION_ENABLED=no
-#            - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-#            - SPARK_SSL_ENABLED=no
-#        volumes:
-#            - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
-#            - ../spark/resources/data:/usr/local/spark/resources/data #Data folder (Must be the same path in airflow and Spark Cluster)
-#
-#    spark-worker-3:
-#        image: bitnami/spark:2.4.6
-#        networks:
-#            - default_net
-#        environment:
-#            - SPARK_MODE=worker
-#            - SPARK_MASTER_URL=spark://spark:7077
-#            - SPARK_WORKER_MEMORY=1G
-#            - SPARK_WORKER_CORES=1
-#            - SPARK_RPC_AUTHENTICATION_ENABLED=no
-#            - SPARK_RPC_ENCRYPTION_ENABLED=no
-#            - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-#            - SPARK_SSL_ENABLED=no
-#        volumes:
-#            - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
-#            - ../spark/resources/data:/usr/local/spark/resources/data #Data folder (Must be the same path in airflow and Spark Cluster)
-
-    db:
-
-        image: mysql:8.0
-        container_name: spark_mysql
-        command: '--default-authentication-plugin=mysql_native_password'
-        ports:
-            - "32001:3306"
-        restart: always
-        environment:
-            MYSQL_USER: miadmin
-            MYSQL_PASSWORD: Mi4man11
-            MYSQL_ROOT_PASSWORD: Mi4man11
-            MYSQL_DATABASE: covid_economy_impact
+version: "3.8"
+services:
+    # postgres used by airflow
+    postgres:
+        image: postgres:9.6
         networks:
             - default_net
         volumes:
-            - ./mysql-docker/mysql-initdb.d:/docker-entrypoint-initdb.d
-            - ./mysql_data:/var/lib/mysql
+            # Create Test database on Postgresql
+            - ./docker-airflow/pg-init-scripts:/docker-entrypoint-initdb.d
+        environment:
+            - POSTGRES_USER=airflow
+            - POSTGRES_PASSWORD=airflow
+            - POSTGRES_DB=airflow
+        ports:
+            - "5432:5432"
+
+    # airflow LocalExecutor
+    airflow-webserver:
+        image: docker-airflow-spark:1.10.14_2.4.7
+        restart: always
+        networks:
+            - default_net
+        depends_on:
+            - postgres
+        environment:
+            - LOAD_EX=n
+            - EXECUTOR=Local
+            - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+            - AIRFLOW__CORE__FERNET_KEY=SrFOGUBJCOs5NMvZxJ0wA4KYXr7bOoueiBRvUe3WbFk=
+            #v-STCavygWLUfWPZaSMvDwh0iIpMNxJddcvzq74Fz5c=
+            - FERNET_KEY=SrFOGUBJCOs5NMvZxJ0wA4KYXr7bOoueiBRvUe3WbFk=
+            - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+            #v-STCavygWLUfWPZaSMvDwh0iIpMNxJddcvzq74Fz5c=
+            #- AIRFLOW_HOME=/usr/local/airflow
+        volumes:
+            - ../dags:/usr/local/airflow/dags #DAG folder
+            - ../spark/app:/usr/local/spark/app #Spark Scripts (Must be the same path in airflow and Spark Cluster)
+            - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+        ports:
+            - "8282:8282"
+        command: webserver
+        healthcheck:
+            test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+            interval: 30s
+            timeout: 30s
+            retries: 3
+
+    # Spark with 3 workers
+    spark:
+        image: bitnami/spark:2.4.6
+        user: root # Run container as root container: https://docs.bitnami.com/tutorials/work-with-non-root-containers/
+        hostname: spark
+        networks:
+            - default_net
+        environment:
+            - SPARK_MODE=master
+            - SPARK_RPC_AUTHENTICATION_ENABLED=no
+            - SPARK_RPC_ENCRYPTION_ENABLED=no
+            - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+            - SPARK_SSL_ENABLED=no
+        volumes:
+            - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
+            - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+        ports:
+            - "8181:8080"
+            - "7077:7077"
+
+    spark-worker-1:
+        image: bitnami/spark:2.4.6
+        user: root
+        depends_on:
+            - spark
+        networks:
+            - default_net
+        environment:
+            - SPARK_MODE=worker
+            - SPARK_MASTER_URL=spark://spark:7077
+            - SPARK_WORKER_MEMORY=1G
+            - SPARK_WORKER_CORES=1
+            - SPARK_RPC_AUTHENTICATION_ENABLED=no
+            - SPARK_RPC_ENCRYPTION_ENABLED=no
+            - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+            - SPARK_SSL_ENABLED=no
+        volumes:
+            - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
+            - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+
+    spark-worker-2:
+        image: bitnami/spark:2.4.6
+        user: root
+        depends_on:
+            - spark
+        networks:
+            - default_net
+        environment:
+            - SPARK_MODE=worker
+            - SPARK_MASTER_URL=spark://spark:7077
+            - SPARK_WORKER_MEMORY=1G
+            - SPARK_WORKER_CORES=1
+            - SPARK_RPC_AUTHENTICATION_ENABLED=no
+            - SPARK_RPC_ENCRYPTION_ENABLED=no
+            - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+            - SPARK_SSL_ENABLED=no
+        volumes:
+            - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
+            - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+
+    spark-worker-3:
+        image: bitnami/spark:2.4.6
+        user: root
+        depends_on:
+            - spark
+        networks:
+            - default_net
+        environment:
+            - SPARK_MODE=worker
+            - SPARK_MASTER_URL=spark://spark:7077
+            - SPARK_WORKER_MEMORY=1G
+            - SPARK_WORKER_CORES=1
+            - SPARK_RPC_AUTHENTICATION_ENABLED=no
+            - SPARK_RPC_ENCRYPTION_ENABLED=no
+            - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+            - SPARK_SSL_ENABLED=no
+        volumes:
+            - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
+            - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+#    db:
+#
+#        image: mysql:8.0
+#        container_name: spark_mysql
+#        command: '--default-authentication-plugin=mysql_native_password'
+#        ports:
+#            - "32001:3306"
+#        restart: always
+#        environment:
+#            MYSQL_USER: miadmin
+#            MYSQL_PASSWORD: Mi4man11
+#            MYSQL_ROOT_PASSWORD: Mi4man11
+#            MYSQL_DATABASE: covid_economy_impact
+#        networks:
+#            - default_net
+#        volumes:
+#            - ./mysql-docker/mysql-initdb.d:/docker-entrypoint-initdb.d
+#            - ./mysql_data:/var/lib/mysql
     jupyter-spark:
         image: jupyter/pyspark-notebook
         networks:
