@@ -5,9 +5,9 @@ from airflow.contrib.operators.spark_submit_operator import SparkSubmitOperator
 import os
 
 default_args1 = {
-    'start_date':datetime(2021,3, 10),
-    'retries': 2,
-    'retry_delay': timedelta(minutes=2)
+    'start_date':datetime(2021,4, 23)
+    # 'retries': 2,
+    # 'retry_delay': timedelta(minutes=10)
 
 }
 
@@ -112,7 +112,7 @@ covid_analytics_tables = SparkSubmitOperator(
     jars=jars,
     name = "Analytics Covid",
     task_id='Covid_analytics_tables',
-    dag=dag_monthly)
+    dag=dag)
 
 stock_analytics_tables = SparkSubmitOperator(
     application=analytics_stocks,
@@ -120,11 +120,11 @@ stock_analytics_tables = SparkSubmitOperator(
     jars=jars,
     name = "Analytics Stocks",
     task_id='Stock_analytics_tables',
-    dag=dag_monthly)
+    dag=dag)
 
-extract_covid_data>>transform_load_data_covid
-extract_stock_data>>transform_load_data_stocks
+extract_covid_data>>transform_load_data_covid>>covid_analytics_tables
+extract_stock_data>>transform_load_data_stocks>>stock_analytics_tables
 extract_unemployment_data>>transform_load_data_unemployment
 extract_housing_data>>transform_load_data_housing
-covid_analytics_tables
-stock_analytics_tables
+
+

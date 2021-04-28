@@ -4,9 +4,9 @@ from pyspark.sql.functions import udf
 from pyspark.sql.types import DateType
 from pyspark.sql.functions import year, month, dayofmonth
 import pyspark.sql.functions as f
-from spark.app.sparktasks.utils.DBUtils import DButils
-from spark.app.sparktasks.utils.config import Config
-from spark.app.sparktasks.utils.utils import UdfUtils
+from sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.config import Config
+from sparktasks.utils.utils import UdfUtils
 
 
 class TransformLoad:
@@ -15,9 +15,10 @@ class TransformLoad:
 
     def __init__(self):
         self.DButils = DButils()
-        self.spark = SparkSession.builder.appName('CovidTransformLoad')\
-            .config("spark.ui.port", "4080")\
+        self.spark = SparkSession.builder.appName('CovidTransformLoad') \
             .getOrCreate()
+            #.config("spark.ui.port", "4080")\
+
         self.config = Config()
         date_table = self.config.date_dim
         self.date_dim_df = self.DButils.load_from_db(self.spark, date_table)

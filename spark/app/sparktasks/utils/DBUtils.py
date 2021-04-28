@@ -2,7 +2,7 @@ import configparser
 from pathlib import Path
 import os
 import logging
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.config import Config
 import mysql.connector
 import pandas as pd
 from numpy import record

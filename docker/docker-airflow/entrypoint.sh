@@ -62,16 +62,6 @@ wait_for_port() {
   done
 }
 
-#echo "Waiting for MySQL..."
-#echo "Waiting for database connection..."
-#  # wait for 5 seconds before check again
-# # sleep 5
-#while ! nc -z spark_mysql 3306; do
-#  sleep 0.5
-#done
-#echo "MySQL started"
-
-
 if [ "$AIRFLOW__CORE__EXECUTOR" != "SequentialExecutor" ]; then
   AIRFLOW__CORE__SQL_ALCHEMY_CONN="postgresql+psycopg2://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"
   AIRFLOW__CELERY__RESULT_BACKEND="db+postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"

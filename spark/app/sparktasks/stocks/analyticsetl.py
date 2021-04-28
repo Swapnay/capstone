@@ -3,9 +3,9 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import DateType
 from pyspark.sql.functions import year, month, dayofmonth
-from spark.app.sparktasks.utils.DBUtils import DButils
-from spark.app.sparktasks.utils.config import Config
-from spark.app.sparktasks.utils.utils import UdfUtils
+from sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.config import Config
+from sparktasks.utils.utils import UdfUtils
 import pyspark.sql.functions as F
 from pyspark.sql.window import Window as W
 import dateutil.relativedelta
@@ -19,9 +19,10 @@ class AnalyticsEtl:
     def __init__(self):
         self.DButils = DButils()
         self.config = Config()
-        self.spark = SparkSession.builder.appName('AnalyticsEtl') \
-            .config("spark.ui.port", "4065") \
+        self.spark = SparkSession.builder.appName('StocksAnalyticsEtl') \
             .getOrCreate()
+            #.config("spark.ui.port", "4065") \
+
         stcks_dim = self.config.stocks_dim
         self.stocks_dim_df = self.DButils.load_from_db(self.spark, stcks_dim)
         self.metadata_df = self.DButils.load_from_db(self.spark, self.get_metadata_query())
@@ -134,4 +135,4 @@ class AnalyticsEtl:
 
 if __name__ == "__main__":
     transform_load = AnalyticsEtl()
-    transform_load.transform_load_analytics_tables()
+    #transform_load.transform_load_analytics_tables()

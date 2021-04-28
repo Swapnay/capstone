@@ -1,8 +1,8 @@
 import logging
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.config import Config
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import year, month, dayofmonth
-from spark.app.sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.DBUtils import DButils
 import pyspark.sql.functions as F
 from datetime import datetime
 
@@ -15,8 +15,9 @@ class TransformLoad:
         self.DButils = DButils()
         self.config = Config()
         self.spark = SparkSession.builder.appName('HousingTransformLoad') \
-            .config("spark.ui.port", "4080")\
             .getOrCreate()
+            #.config("spark.ui.port", "4080")\
+
         self.spark.conf.set("spark.sql.crossJoin.enabled", "True")
         self.housing_date_dim = self.DButils.load_from_db(self.spark, self.config.housing_date_dim)
         self.state_df = self.DButils.load_from_db(self.spark, self.config.state_dim)

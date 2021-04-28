@@ -1,12 +1,12 @@
-# VERSION 1.0
-# AUTHOR: swapna
+# VERSION 1.10.2
+# AUTHOR: Thiago Cordon Rodrigues
 # DESCRIPTION: Airflow container with JAVA 8 and SPARK binaries
-# BUILD: docker build --rm -t airflow-spark:latest .
-# BASED ON: https://github.com/cordon-thiago/airflow-spark
+# BUILD: docker build --rm -t docker-airflow-spark:latest .
+# BASED ON: https://github.com/puckel/docker-airflow
 
 # stretch debian version allows JAVA JDK 8
-FROM python:3.6.9-stretch
-LABEL maintainer="swapna-y"
+FROM python:3.6-stretch
+LABEL maintainer="cordon-thiago"
 
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -110,8 +110,7 @@ COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow/airflow.cfg
 ## SPARK files and variables
 ###############################
 ENV SPARK_HOME /usr/local/spark
-RUN apt update && \
-    apt install -y netcat-openbsd
+
 # Spark submit binaries and jars (Spark binaries must be the same version of spark cluster)
 RUN cd "/tmp" && \
         wget --no-verbose "https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" && \
@@ -119,31 +118,22 @@ RUN cd "/tmp" && \
         mkdir -p "${SPARK_HOME}/bin" && \
         mkdir -p "${SPARK_HOME}/assembly/target/scala-2.12/jars" && \
         cp -a "spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}/bin/." "${SPARK_HOME}/bin/" && \
-
         cp -a "spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}/jars/." "${SPARK_HOME}/assembly/target/scala-2.12/jars/" && \
         rm "spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz"
 
 # Create SPARK_HOME env var
 RUN export SPARK_HOME
-ENV STORAGE_ACCOUNT=covid19systorage
-ENV AZURE_CONTAINER=sb-guided-blob
 ENV PATH $PATH:/usr/local/spark/bin
-# jars to connect to
-COPY config/jars ${SPARK_HOME}/assembly/target/scala-2.12/jars/
-#COPY config/core-site.xml  ${SPARK_HOME}/conf/
-RUN pip3 install mysql-connector-python
-RUN pip3 install mysql-connector-python-rf
-RUN pip3 install pandas_datareader
-
+ENV FERNET_KEY SrFOGUBJCOs5NMvZxJ0wA4KYXr7bOoueiBRvUe3WbFk=
 ###############################
 ## Finish SPARK files and variables
 ###############################
 
+# jars to connect to
+COPY config/jars ${SPARK_HOME}/assembly/target/scala-2.12/jars/
+
 RUN chown -R airflow: ${AIRFLOW_HOME}
 RUN chmod +x entrypoint.sh
-ENV SPARK_DATA=/usr/local/spark/resources/data/
-#COPY ../mysql-docker/mysql-initdb.d /docker-entrypoint-initdb.d/
-#RUN chmod -R +x /docker-entrypoint-initdb.d
 
 EXPOSE 8080 5555 8793
 

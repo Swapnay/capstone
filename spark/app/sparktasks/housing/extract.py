@@ -1,9 +1,9 @@
 import os
 from pyspark.sql import SparkSession
 import pandas as pd
-from spark.app.sparktasks.utils.DBUtils import DButils
-from spark.app.sparktasks.utils.utils import UdfUtils
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.utils import UdfUtils
+from sparktasks.utils.config import Config
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 import logging
@@ -14,7 +14,7 @@ class Extract:
 
     def __init__(self):
         self.DButils = DButils()
-        self.spark = SparkSession.builder.appName('Extract').master('local').getOrCreate()
+        self.spark = SparkSession.builder.appName('HousingExtract').getOrCreate()
         self.config = Config()
         self.metadata_df = self.DButils.load_from_db(self.spark, self.config.metadata)
         self.metadata_df.createGlobalTempView(self.config.metadata)

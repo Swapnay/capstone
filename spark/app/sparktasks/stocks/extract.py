@@ -1,8 +1,8 @@
 import os
 from pyspark.sql import SparkSession
 import pandas as pd
-from spark.app.sparktasks.utils.DBUtils import DButils
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.config import Config
 import datetime
 import logging
 from pandas_datareader import data
@@ -14,7 +14,7 @@ class Extract:
 
     def __init__(self):
         self.DButils = DButils()
-        self.spark = SparkSession.builder.appName('Extract').master('local').getOrCreate()
+        self.spark = SparkSession.builder.appName('Extract').getOrCreate()
         self.config = Config()
         self.metadata_df = self.DButils.load_from_db(self.spark, self.config.metadata)
         self.metadata_df.createGlobalTempView(self.config.metadata)
@@ -85,5 +85,5 @@ class Extract:
 
 if __name__ == "__main__":
     extract = Extract()
-    #extract.extract_from_source()
-    extract.store_raw_in_db()
+    # extract.extract_from_source()
+    # extract.store_raw_in_db()

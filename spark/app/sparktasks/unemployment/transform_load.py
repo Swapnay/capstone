@@ -2,9 +2,9 @@ import logging
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType,DateType
-from spark.app.sparktasks.utils.config import Config
-from spark.app.sparktasks.utils.DBUtils import DButils
-from spark.app.sparktasks.utils.utils import UdfUtils
+from sparktasks.utils.config import Config
+from sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.utils import UdfUtils
 import pyspark.sql.functions as F
 from datetime import datetime
 
@@ -16,7 +16,8 @@ class TransformLoad:
     def __init__(self):
         self.DButils = DButils()
         self.config = Config()
-        self.spark = SparkSession.builder.appName('EmploymentTransformLoad').config("spark.ui.port", "4065").getOrCreate()
+        self.spark = SparkSession.builder.appName('EmploymentTransformLoad').getOrCreate()
+        #.config("spark.ui.port", "4065")
         self.spark.conf.set("spark.sql.crossJoin.enabled", "True")
         self.date_dim_df = self.DButils.load_from_db(self.spark, self.config.get_config('DIMS', 'HOUSING_DATE_DIM'))
         self.state_df = self.DButils.load_from_db(self.spark, self.config.state_dim)
@@ -40,8 +41,8 @@ class TransformLoad:
                 month_str = 'M0'+str(month+1)
             else:
                 month_str = 'M'+str(month+1)
-            return """(SELECT * FROM {} WHERE  Results_series_data_year>= {} AND 
-             Results_series_data_period >= '{}') foo""".format(raw, year, month_str)
+            return """(SELECT * FROM {} WHERE  Results_series_data_year>= {} AND Results_series_data_period >= '{}') foo"""\
+                .format(raw, year, month_str)
             #convert(SUBSTRING_INDEX(Results_series_data_period,'M',-1),UNSIGNED INTEGER) >= {}) foo"""\
 
         return raw
@@ -191,7 +192,9 @@ class TransformLoad:
                     continue
                 raw = self.config.get_config('RAW', name)
                 fact_table = self.config.get_config('FACTS', name)
-                unemployment_df = self.DButils.load_from_db(self.spark, self.get_table_query(name,raw))
+                query=self.get_table_query(name,raw)
+                logging.info(query)
+                unemployment_df = self.DButils.load_from_db(self.spark,query )
                 if unemployment_df.count() == 0:
                     continue
                 split_udf = udf(lambda d: UdfUtils.get_month(d), StringType())
@@ -204,8 +207,6 @@ class TransformLoad:
                 date_udf =udf(lambda d, y: UdfUtils.get_date(d,y), DateType())
                 unemployment_df =unemployment_df.withColumn('submission_date',date_udf(unemployment_df.umonth,unemployment_df.year))
                 unemp_df = self.exec_query(unemployment_df, name)
-
-                #unemp_df = unemp_df.withColumn('submission_date', F.lit(datetime.now())).orderBy('date_id')
 
                 max_date = unemp_df.agg(F.max('date_id')).first()[0]
                 self.DButils.save_to_db(unemp_df, self.config.get_config('FACTS', name))

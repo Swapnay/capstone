@@ -3,9 +3,9 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import DateType
 from pyspark.sql.functions import year, month, dayofmonth
-from spark.app.sparktasks.utils.DBUtils import DButils
-from spark.app.sparktasks.utils.config import Config
-from spark.app.sparktasks.utils.utils import UdfUtils
+from sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.config import Config
+from sparktasks.utils.utils import UdfUtils
 import pyspark.sql.functions as F
 from datetime import datetime, timedelta
 
@@ -18,9 +18,10 @@ class AnalyticsEtl:
     def __init__(self):
         self.DButils = DButils()
         self.config = Config()
-        self.spark = SparkSession.builder.appName('AnalyticsEtl') \
-            .config("spark.ui.port", "4065") \
+        self.spark = SparkSession.builder.appName('CovidAnalyticsEtl') \
             .getOrCreate()
+            #.config("spark.ui.port", "4065") \
+
         self.metadata_df = self.DButils.load_from_db(self.spark, self.get_metadata_query())
         logging.info("initialization done")
 

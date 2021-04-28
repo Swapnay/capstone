@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 import logging
-from spark.app.sparktasks.utils.DBUtils import DButils
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.config import Config
 from datetime import datetime, timedelta
 import pyspark.sql.functions as F
 
@@ -14,8 +14,9 @@ class AnalyticsEtl:
         self.DButils = DButils()
         self.config = Config()
         self.spark = SparkSession.builder.appName('Housing.AnalyticsEtl') \
-            .config("spark.ui.port", "4065") \
             .getOrCreate()
+            #.config("spark.ui.port", "4065") \
+
         self.metadata_df = self.DButils.load_from_db(self.spark, self.get_metadata_query())
         self.state_df = self.DButils.load_from_db(self.spark, self.config.state_dim)
         logging.info("initialization done")

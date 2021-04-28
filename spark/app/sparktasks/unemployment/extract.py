@@ -1,9 +1,9 @@
 import logging
 
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.config import Config
 import os
 from pyspark.sql import SparkSession
-from spark.app.sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.DBUtils import DButils
 import requests
 import pandas as pd
 from os.path import isfile, join
@@ -15,7 +15,7 @@ from pyspark.sql.functions import year, month, dayofmonth, udf
 import  pyspark.sql.functions as F
 
 
-from spark.app.sparktasks.utils.utils import UdfUtils
+from sparktasks.utils.utils import UdfUtils
 
 
 class Extract:
@@ -42,8 +42,9 @@ class Extract:
     def __init__(self):
         self.DButils = DButils()
         self.spark = SparkSession.builder.appName('ExtractCovid') \
-            .config("spark.ui.port", "4070") \
             .getOrCreate()
+            #.config("spark.ui.port", "4070") \
+
         self.config = Config()
         self.metadata_df = self.DButils.load_from_db(self.spark, self.config.metadata)
         self.metadata_df.createGlobalTempView("metadata")

@@ -1,8 +1,8 @@
 import logging
 
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.config import Config
 from pyspark.sql import SparkSession
-from spark.app.sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.DBUtils import DButils
 import pandas as pd
 import os
 
@@ -12,7 +12,9 @@ class Extract:
 
     def __init__(self):
         self.DButils = DButils()
-        self.spark = SparkSession.builder.appName('Extract').config("spark.ui.port", "4080").getOrCreate()
+        self.spark = SparkSession.builder.appName('CovidExtract')\
+                                         .getOrCreate()
+        #.config("spark.ui.port", "4080")
         self.config = Config()
         self.metadata_df = self.DButils.load_from_db(self.spark, self.config.metadata)
         self.metadata_df.createGlobalTempView("metadata")
@@ -60,5 +62,5 @@ class Extract:
 
 if __name__ == "__main__":
     extract = Extract()
-    #extract.extract_from_source()
+    extract.extract_from_source()
     extract.store_raw_in_db()

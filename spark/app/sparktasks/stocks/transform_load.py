@@ -1,12 +1,12 @@
 import logging
 import os
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.config import Config
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import DateType
 from pyspark.sql.functions import year, month, dayofmonth
-from spark.app.sparktasks.utils.utils import UdfUtils
-from spark.app.sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.utils import UdfUtils
+from sparktasks.utils.DBUtils import DButils
 import pyspark.sql.functions as F
 
 
@@ -17,7 +17,7 @@ class TransformLoad:
     def __init__(self):
         self.DButils = DButils()
         self.config = Config()
-        self.spark = SparkSession.builder.appName('StocksTransformLoadc').config("spark.ui.port", "4065").getOrCreate()
+        self.spark = SparkSession.builder.appName('StocksTransformLoadc').getOrCreate()
         date_table = self.config.date_dim
         self.date_dim_df = self.DButils.load_from_db(self.spark, date_table)
         self.date_dim_df.createGlobalTempView(date_table)
@@ -97,4 +97,4 @@ class TransformLoad:
 
 if __name__ == "__main__":
     transform_load = TransformLoad()
-    transform_load.transform_load_data()
+    #transform_load.transform_load_data()
