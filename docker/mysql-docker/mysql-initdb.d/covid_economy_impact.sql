@@ -368,7 +368,7 @@ CREATE TABLE `metadata` (
   `other_data` text,
   `sector_type` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `metadata_unique` (`sector_sub_type`,`execution_date`)
+  UNIQUE KEY `metadata_unique` (`sector_sub_type`,`execution_date`,`sector_type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1100 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

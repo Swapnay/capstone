@@ -1,9 +1,9 @@
 import logging
 
-from sparktasks.utils.config import Config
+from spark.app.sparktasks.utils.config import Config
 import os
 from pyspark.sql import SparkSession
-from sparktasks.utils.DBUtils import DButils
+from spark.app.sparktasks.utils.DBUtils import DButils
 import requests
 import pandas as pd
 from os.path import isfile, join
@@ -15,7 +15,7 @@ from pyspark.sql.functions import year, month, dayofmonth, udf
 import  pyspark.sql.functions as F
 
 
-from sparktasks.utils.utils import UdfUtils
+from spark.app.sparktasks.utils.utils import UdfUtils
 
 
 class Extract:
@@ -178,5 +178,5 @@ class Extract:
 
 if __name__ == "__main__":
     extract = Extract()
-    #extract.extract_from_source()
+    extract.extract_from_source()
     extract.store_raw_in_db()

@@ -1,8 +1,8 @@
 import os
 from pyspark.sql import SparkSession
 import pandas as pd
-from sparktasks.utils.DBUtils import DButils
-from sparktasks.utils.config import Config
+from spark.app.sparktasks.utils.DBUtils import DButils
+from spark.app.sparktasks.utils.config import Config
 import datetime
 import logging
 from pandas_datareader import data
@@ -50,7 +50,7 @@ class Extract:
                         panel_data.to_csv(new_path)
                     except Exception as ex:
                         print(ex)
-                full_path = os.path.join(data_dir, key +"csv")
+                full_path = os.path.join(data_dir, key +".csv")
                 stocks_data.to_csv(full_path, index=False)
                 logging.info("Data Extracted to %s", full_path)
         except Exception as ex:
@@ -76,6 +76,8 @@ class Extract:
                     self.spark.sparkContext.addFile(file_path)
                     stocks_raw = self.spark.read.csv('file://{}'.format(file_path), header=True, inferSchema=True)
                     stocks_raw = stocks_raw.withColumn("symbol",F.lit(symbol))
+                    if stocks_raw.count() == 0:
+                        continue
 
                     self.DButils.save_to_db(stocks_raw, table_name)
             logging.info("Created Raw table name %s", table_name)
@@ -85,5 +87,5 @@ class Extract:
 
 if __name__ == "__main__":
     extract = Extract()
-    # extract.extract_from_source()
-    # extract.store_raw_in_db()
+    extract.extract_from_source()
+    extract.store_raw_in_db()

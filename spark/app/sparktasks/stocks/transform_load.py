@@ -1,12 +1,12 @@
 import logging
 import os
-from sparktasks.utils.config import Config
+from spark.app.sparktasks.utils.config import Config
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import DateType
 from pyspark.sql.functions import year, month, dayofmonth
-from sparktasks.utils.utils import UdfUtils
-from sparktasks.utils.DBUtils import DButils
+from spark.app.sparktasks.utils.utils import UdfUtils
+from spark.app.sparktasks.utils.DBUtils import DButils
 import pyspark.sql.functions as F
 
 
@@ -66,9 +66,9 @@ class TransformLoad:
         file_path = os.path.join(data_dir, ticker + ".csv")
         if os.path.isfile(file_path):
             self.spark.sparkContext.addFile(file_path)
-            ##stocks_fact = self.spark.read.csv('file://{}'.format(file_path), header=True,
-            ##                                  inferSchema=True)
             stocks_fact = self.DButils.load_from_db(self.spark, self.get_table_query(ticker))
+            if stocks_fact.count() == 0:
+                return
             date_udf = udf(lambda d: UdfUtils.convert_to_date_world(d), DateType())
             stocks_fact = stocks_fact.fillna(0)
             stocks_fact = stocks_fact.withColumnRenamed("High", "high") \
@@ -87,8 +87,7 @@ class TransformLoad:
             stocks_fact_df = stocks_fact_df.withColumnRenamed("id", "date_id")
             stocks_fact_df = stocks_fact_df.select("stock_id", "date_id", "stock_date", "open_price", "closing_price",
                                                    "high", "low", "volume")
-            if stocks_fact_df.count() == 0:
-                return
+
             self.DButils.save_to_db(stocks_fact_df, self.config.stocks_fact)
             max_date = stocks_fact_df.select(F.max("stock_date")).first()[0]
             record_count = stocks_fact_df.count()
@@ -97,4 +96,4 @@ class TransformLoad:
 
 if __name__ == "__main__":
     transform_load = TransformLoad()
-    #transform_load.transform_load_data()
+    transform_load.transform_load_data()

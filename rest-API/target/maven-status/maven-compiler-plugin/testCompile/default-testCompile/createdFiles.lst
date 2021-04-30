@@ -1,0 +1,9 @@
+com/capstone/CovidImpactApplicationTests.class
+com/capstone/repository/StocksRepositoryIntegrationTest.class
+com/capstone/controller/CovidUSARestControllerIntegrationTest.class
+com/capstone/controller/UnemploymentRestControllerIntegrationTest.class
+com/capstone/controller/StocksRestControllerIntegrationTest.class
+com/capstone/repository/CovidWorldRepositoryIntegrationTest.class
+com/capstone/controller/CovidWorldRestControllerIntegrationTest.class
+com/capstone/repository/CovidUSARepositoryIntegrationTest.class
+com/capstone/repository/UnemploymentRepositoryIntegrationTest.class

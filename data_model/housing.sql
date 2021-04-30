@@ -94,8 +94,32 @@ CREATE TABLE home_inventory_sales_fact
     UNIQUE( metro_id, date_id, state_id)
 )ENGINE=InnoDB;
 
+CREATE TABLE home_prices_monthly
+(
+    id SERIAL PRIMARY KEY,
+    state VARCHAR(10) NOT NULL,
+    state_name VARCHAR(50) NOT NULL,
+    inventory_type ENUM('mid_tier', 'top_tier','bottom_tier', 'single_family',
+    'condo','1bd','2bd','3bd','4bd','5bd'),
+    avg_price DECIMAL(13,2) DEFAULT 0.00,
+    year INT NOT NULL,
+    month TiNYINT,
+    inventory_date Date,
+    UNIQUE(inventory_type,state, month,year)
+)ENGINE=InnoDB;
 
-
+CREATE TABLE home_inventory_monthly
+(
+    id SERIAL PRIMARY KEY,
+    state VARCHAR(10) NOT NULL,
+    state_name VARCHAR(50) NOT NULL,
+    inventory_type enum('days_to_pending','for_sale','median_sale_price','median_list_price','mean_price_cut','median_price_cut'),
+    days DECIMAL(13,2) DEFAULT 0.00,
+    year INT NOT NULL,
+    month TiNYINT,
+    inventory_date DATE,
+    UNIQUE(inventory_type,state, month,year)
+)ENGINE=InnoDB;
 
 
 

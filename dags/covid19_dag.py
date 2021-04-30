@@ -1,11 +1,12 @@
 from airflow.models import DAG
 from datetime import datetime, timedelta
+from airflow.operators.dummy_operator import DummyOperator
 from airflow.contrib.operators.spark_submit_operator import SparkSubmitOperator
 
 import os
 
 default_args1 = {
-    'start_date':datetime(2021,4, 23)
+    'start_date':datetime(2021,4, 29)
     # 'retries': 2,
     # 'retry_delay': timedelta(minutes=10)
 
@@ -23,6 +24,11 @@ dag_monthly = DAG(
     description='Monthly dag',
     default_args=default_args1)
 
+start_daily = DummyOperator(task_id="start", dag=dag)
+stop_daily = DummyOperator(task_id="stop", dag=dag)
+start_monthly = DummyOperator(task_id="start", dag=dag_monthly)
+stop_monthly = DummyOperator(task_id="stop", dag=dag_monthly)
+
 extract_point_covid = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","covid","extract.py")
 transform_load_point_covid = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","covid","transform_load.py")
 analytics_covid = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","covid","analyticsetl.py")
@@ -31,11 +37,14 @@ extract_point_stocks = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks
 transform_load_point_stocks = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","stocks","transform_load.py")
 analytics_stocks = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","stocks","analyticsetl.py")
 
-extract_point_unemployment = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","unemployment","extract.py")
-transform_load_point_unemployment = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","unemployment","transform_load.py")
+unemployment =os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","unemployment")
+extract_point_unemployment = os.path.join(unemployment,"extract.py")
+transform_load_point_unemployment = os.path.join(unemployment,"transform_load.py")
+analytics_unemployment = os.path.join(unemployment,"analyticsetl.py")
 
 extract_point_housing = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","housing","extract.py")
 transform_load_housing = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","housing","transform_load.py")
+analytics_housing = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","housing","analyticsetl.py")
 
 dependency_path = os.path.join(os.environ["SPARK_HOME"], "app","sparktasks.zip")
 jars = os.path.join(os.environ["SPARK_HOME"], "assembly","target", "scala-2.12",
@@ -122,9 +131,25 @@ stock_analytics_tables = SparkSubmitOperator(
     task_id='Stock_analytics_tables',
     dag=dag)
 
-extract_covid_data>>transform_load_data_covid>>covid_analytics_tables
-extract_stock_data>>transform_load_data_stocks>>stock_analytics_tables
-extract_unemployment_data>>transform_load_data_unemployment
-extract_housing_data>>transform_load_data_housing
+employment_analytics_tables = SparkSubmitOperator(
+    application=analytics_unemployment,
+    py_files=dependency_path,
+    jars=jars,
+    name = "Analytics unemployment",
+    task_id='employment_analytics_tables',
+    dag=dag_monthly)
+
+housing_analytics_tables = SparkSubmitOperator(
+    application=analytics_housing,
+    py_files=dependency_path,
+    jars=jars,
+    name = "Analytics housing",
+    task_id='housing_analytics_tables',
+    dag=dag_monthly)
+
+start_daily>>extract_covid_data>>transform_load_data_covid>>covid_analytics_tables>>stop_daily
+start_daily>>extract_stock_data>>transform_load_data_stocks>>stock_analytics_tables>>stop_daily
+start_monthly>>extract_unemployment_data>>transform_load_data_unemployment>>analytics_unemployment>>stop_monthly
+start_monthly>>extract_housing_data>>transform_load_data_housing>>analytics_housing>>stop_monthly
 
 

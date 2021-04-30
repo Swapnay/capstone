@@ -4,7 +4,7 @@ import os
 
 class Config:
     config = configparser.RawConfigParser()
-    imperial_path = os.getenv('SPARK_HOME')
+    imperial_path ="/Users/syeruvala/Exercism/python/capstone_final/spark/"  #os.getenv('SPARK_HOME')
     config.read_file(open(os.path.join(imperial_path, "app", "sparktasks", "config.cfg")))  # "/usr/local/spark/app/sparktasks/config.cfg"))
 
     @property
@@ -106,6 +106,24 @@ class Config:
     @property
     def covid_world_fact(self):
         return self.config.get('FACTS', 'COVID_WORLD_DATA')
+
+    @property
+    def housing_inventory_fact(self):
+        return self.config.get('FACTS', 'HOUSING_INVENTORY')
+
+
+    @property
+    def housing_price_fact(self):
+        return self.config.get('FACTS', 'HOUSING_PRICE')
+
+    @property
+    def housing_inventory_monthly(self):
+        return self.config.get('ANALYTICS', 'HOUSING_INVENTORY')
+
+
+    @property
+    def housing_price_monthly(self):
+        return self.config.get('ANALYTICS', 'HOUSING_PRICE')
 
     @property
     def covid_usa_sector(self):

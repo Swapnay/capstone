@@ -1,8 +1,8 @@
 import logging
-from sparktasks.utils.config import Config
+from spark.app.sparktasks.utils.config import Config
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import year, month, dayofmonth
-from sparktasks.utils.DBUtils import DButils
+from spark.app.sparktasks.utils.DBUtils import DButils
 import pyspark.sql.functions as F
 from datetime import datetime
 

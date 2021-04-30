@@ -1,9 +1,9 @@
 import os
 from pyspark.sql import SparkSession
 import pandas as pd
-from sparktasks.utils.DBUtils import DButils
-from sparktasks.utils.utils import UdfUtils
-from sparktasks.utils.config import Config
+from spark.app.sparktasks.utils.DBUtils import DButils
+from spark.app.sparktasks.utils.utils import UdfUtils
+from spark.app.sparktasks.utils.config import Config
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 import logging
@@ -36,8 +36,8 @@ class Extract:
             housing_dict = dict(source_map)
             for key, value in housing_dict.items():
                 logging.info("Data Extract in progress from %s", value)
-                if not os.path.isfile(value):
-                    continue
+                # if not os.path.isfile(value):
+                #     continue
                 housing_data = pd.read_csv(value)
                 data_dir = self.config.data_dir
                 columns = housing_data.columns
@@ -55,7 +55,7 @@ class Extract:
                 #         index_from = columns.get_loc('2018-01-31')
                 #     col_list = housing_data.columns[index_from:index_to + 1].values.tolist()
                 #     housing_data.drop(col_list, axis=1, inplace=True)
-                full_path = os.path.join(data_dir, key)
+                full_path = os.path.join(data_dir, key + ".csv")
                 housing_data.to_csv(full_path, index=False)
                 logging.info("Data Extracted to %s", full_path)
         except Exception as ex:
@@ -95,5 +95,5 @@ class Extract:
 
 if __name__ == "__main__":
     extract = Extract()
-    #extract.extract_from_source()
-    #extract.store_raw_in_db()
+    extract.extract_from_source()
+    extract.store_raw_in_db()

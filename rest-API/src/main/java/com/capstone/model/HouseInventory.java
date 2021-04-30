@@ -1,0 +1,113 @@
+package com.capstone.model;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@Entity
+@Table(name = "home_inventory_monthly")
+@EntityListeners(AuditingEntityListener.class)
+public class HouseInventory {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
+    @Column(name="state",nullable = false)
+    private String state;
+
+    @NotBlank
+    @Column(name="state_name",nullable = false)
+    private String stateName;
+
+    @NotBlank
+    private int year;
+    @NotBlank
+    private int month;
+    @NotBlank
+    @Column(name="days",nullable = false)
+    private double days;
+
+    @Column(name="inventory_date",nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date submissionDate;
+
+    @NotBlank
+    @Column(name="inventory_type",nullable = false)
+    private String inventoryType;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public double getDays() {
+        return days;
+    }
+
+    public void setDays(double days) {
+        this.days = days;
+    }
+
+    public Date getSubmissionDate() {
+        return submissionDate;
+    }
+
+    public void setSubmissionDate(Date submissionDate) {
+        this.submissionDate = submissionDate;
+    }
+
+    public String getInventoryType() {
+        return inventoryType;
+    }
+
+    public void setInventoryType(String inventoryType) {
+        this.inventoryType = inventoryType;
+    }
+}
