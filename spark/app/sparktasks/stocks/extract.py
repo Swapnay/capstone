@@ -1,8 +1,8 @@
 import os
 from pyspark.sql import SparkSession
 import pandas as pd
-from spark.app.sparktasks.utils.DBUtils import DButils
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.config import Config
 import datetime
 import logging
 from pandas_datareader import data

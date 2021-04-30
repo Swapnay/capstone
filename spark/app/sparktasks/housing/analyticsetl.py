@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 import logging
-from spark.app.sparktasks.utils.DBUtils import DButils
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.config import Config
 from datetime import datetime, timedelta
 import pyspark.sql.functions as F
 

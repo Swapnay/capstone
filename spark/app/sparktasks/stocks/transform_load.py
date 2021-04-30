@@ -1,12 +1,12 @@
 import logging
 import os
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.config import Config
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import DateType
 from pyspark.sql.functions import year, month, dayofmonth
-from spark.app.sparktasks.utils.utils import UdfUtils
-from spark.app.sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.utils import UdfUtils
+from sparktasks.utils.DBUtils import DButils
 import pyspark.sql.functions as F
 
 

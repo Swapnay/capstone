@@ -4,9 +4,9 @@ from pyspark.sql.functions import udf
 from pyspark.sql.types import DateType
 from pyspark.sql.functions import year, month, dayofmonth
 import pyspark.sql.functions as f
-from spark.app.sparktasks.utils.DBUtils import DButils
-from spark.app.sparktasks.utils.config import Config
-from spark.app.sparktasks.utils.utils import UdfUtils
+from sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.config import Config
+from sparktasks.utils.utils import UdfUtils
 
 
 class TransformLoad:

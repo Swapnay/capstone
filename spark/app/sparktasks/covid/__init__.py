@@ -1,5 +1,5 @@
 # import logging.config
-#  from  spark.app.sparktasks.util import PathUtil
+#  from  sparktasks.util import PathUtil
 # import os
 #
 #

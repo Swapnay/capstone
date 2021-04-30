@@ -1,5 +1,5 @@
-from  spark.app.sparktasks.covid.extract import Extract
-from  spark.app.sparktasks.covid.transform_load import TransformLoad
+from  sparktasks.covid.extract import Extract
+from  sparktasks.covid.transform_load import TransformLoad
 #class ETL:
 
 @staticmethod

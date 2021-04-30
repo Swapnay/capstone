@@ -1,8 +1,8 @@
 import logging
 
-from spark.app.sparktasks.utils.config import Config
+from sparktasks.utils.config import Config
 from pyspark.sql import SparkSession
-from spark.app.sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.DBUtils import DButils
 import pandas as pd
 import os
 

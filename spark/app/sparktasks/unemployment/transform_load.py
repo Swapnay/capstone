@@ -2,9 +2,9 @@ import logging
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType,DateType
-from spark.app.sparktasks.utils.config import Config
-from spark.app.sparktasks.utils.DBUtils import DButils
-from spark.app.sparktasks.utils.utils import UdfUtils
+from sparktasks.utils.config import Config
+from sparktasks.utils.DBUtils import DButils
+from sparktasks.utils.utils import UdfUtils
 import pyspark.sql.functions as F
 from datetime import datetime
 

@@ -1,5 +1,5 @@
-from  spark.app.sparktasks.stocks.extract import Extract
-from  spark.app.sparktasks.stocks.transform_load import TransformLoad
+from  sparktasks.stocks.extract import Extract
+from  sparktasks.stocks.transform_load import TransformLoad
 class ETL:
 
     @staticmethod
