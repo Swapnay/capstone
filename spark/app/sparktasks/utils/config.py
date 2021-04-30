@@ -4,8 +4,8 @@ import os
 
 class Config:
     config = configparser.RawConfigParser()
-    imperial_path ="/Users/syeruvala/Exercism/python/capstone_final/spark/"  #os.getenv('SPARK_HOME')
-    config.read_file(open(os.path.join(imperial_path, "app", "sparktasks", "config.cfg")))  # "/usr/local/spark/app/sparktasks/config.cfg"))
+    imperial_path =os.getenv('SPARK_HOME')
+    config.read_file(open(os.path.join(imperial_path, "app", "sparktasks", "config.cfg")))
 
     @property
     def mysql_user(self):

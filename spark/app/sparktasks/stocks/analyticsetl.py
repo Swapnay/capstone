@@ -135,4 +135,4 @@ class AnalyticsEtl:
 
 if __name__ == "__main__":
     transform_load = AnalyticsEtl()
-    #transform_load.transform_load_analytics_tables()
+    transform_load.transform_load_analytics_tables()

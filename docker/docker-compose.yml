@@ -64,6 +64,7 @@ services:
         environment:
             - SPARK_MODE=master
             - SPARK_RPC_AUTHENTICATION_ENABLED=no
+            - "SPARK_MASTER_WEBUI_PORT=8080"
             - SPARK_RPC_ENCRYPTION_ENABLED=no
             - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
             - SPARK_SSL_ENABLED=no
@@ -73,13 +74,13 @@ services:
         deploy:
             resources:
                 limits:
-                    cpus: '0.75'
+                    cpus: '1'
                     memory: 3G
                 reservations:
                     cpus: '0.25'
                     memory: 500M
         ports:
-            - "8181:8080"
+            - "8080:8080"
             - "7077:7077"
 
     spark-worker-1:
@@ -92,6 +93,7 @@ services:
         environment:
             - SPARK_MODE=worker
             - SPARK_MASTER_URL=spark://spark:7077
+            - SPARK_WORKER_WEBUI_PORT=8082
             - SPARK_WORKER_MEMORY=2G
             - SPARK_WORKER_CORES=2
             - SPARK_RPC_AUTHENTICATION_ENABLED=no
@@ -101,10 +103,12 @@ services:
         volumes:
             - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
             - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+        ports:
+            - 8082:8082
         deploy:
             resources:
                 limits:
-                    cpus: '0.75'
+                    cpus: '1'
                     memory: 2G
                 reservations:
                     cpus: '0.25'
@@ -119,19 +123,22 @@ services:
         environment:
             - SPARK_MODE=worker
             - SPARK_MASTER_URL=spark://spark:7077
+            - SPARK_WORKER_WEBUI_PORT=8081
             - SPARK_WORKER_MEMORY=2G
             - SPARK_WORKER_CORES=2
             - SPARK_RPC_AUTHENTICATION_ENABLED=no
             - SPARK_RPC_ENCRYPTION_ENABLED=no
             - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
             - SPARK_SSL_ENABLED=no
+        ports:
+            - 8081:8081
         volumes:
             - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
             - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
         deploy:
             resources:
                 limits:
-                    cpus: '0.75'
+                    cpus: '1'
                     memory: 2G
                 reservations:
                     cpus: '0.25'
@@ -146,41 +153,74 @@ services:
         environment:
             - SPARK_MODE=worker
             - SPARK_MASTER_URL=spark://spark:7077
+            - SPARK_WORKER_WEBUI_PORT=8181
             - SPARK_WORKER_MEMORY=2G
             - SPARK_WORKER_CORES=2
             - SPARK_RPC_AUTHENTICATION_ENABLED=no
             - SPARK_RPC_ENCRYPTION_ENABLED=no
             - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
             - SPARK_SSL_ENABLED=no
+        ports:
+            - 8181:8181
         volumes:
             - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
             - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
         deploy:
             resources:
                 limits:
-                    cpus: '0.75'
+                    cpus: '1'
                     memory: 2G
                 reservations:
                     cpus: '0.25'
                     memory: 500M
-    db:
-
-        image: mysql:8.0
-        container_name: spark_mysql
-        command: '--default-authentication-plugin=mysql_native_password'
-        ports:
-            - "32001:3306"
-        restart: always
-        environment:
-            MYSQL_USER: miadmin
-            MYSQL_PASSWORD: Mi4man11
-            MYSQL_ROOT_PASSWORD: Mi4man11
-            MYSQL_DATABASE: covid_economy_impact
+    spark-worker-4:
+        image: bitnami/spark:2.4.6
+        user: root
+        depends_on:
+            - spark
         networks:
             - default_net
+        environment:
+            - SPARK_MODE=worker
+            - SPARK_MASTER_URL=spark://spark:7077
+            - SPARK_WORKER_WEBUI_PORT=8180
+            - SPARK_WORKER_MEMORY=2G
+            - SPARK_WORKER_CORES=2
+            - SPARK_RPC_AUTHENTICATION_ENABLED=no
+            - SPARK_RPC_ENCRYPTION_ENABLED=no
+            - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+            - SPARK_SSL_ENABLED=no
+        ports:
+            - 8180:8180
         volumes:
-            - /Users/syeruvala/Exercism/python/capstone_final_pipeline/spark_airflow_data_pipeline/docker/mysql-docker/mysql-initdb.d:/docker-entrypoint-initdb.d
-            - /Users/syeruvala/Exercism/python/capstone_final_pipeline/spark_airflow_data_pipeline/docker/mysql_data:/var/lib/mysql
+            - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
+            - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+        deploy:
+            resources:
+                limits:
+                    cpus: '1'
+                    memory: 2G
+                reservations:
+                    cpus: '0.25'
+                    memory: 500M
+#    db:
+#
+#        image: mysql:8.0
+#        container_name: spark_mysql
+#        command: '--default-authentication-plugin=mysql_native_password'
+#        ports:
+#            - "32001:3306"
+#        restart: always
+#        environment:
+#            MYSQL_USER: miadmin
+#            MYSQL_PASSWORD: Mi4man11
+#            MYSQL_ROOT_PASSWORD: Mi4man11
+#            MYSQL_DATABASE: covid_economy_impact
+#        networks:
+#            - default_net
+#        volumes:
+#            - /Users/syeruvala/Exercism/python/capstone_final_pipeline/spark_airflow_data_pipeline/docker/mysql-docker/mysql-initdb.d:/docker-entrypoint-initdb.d
+#            - /Users/syeruvala/Exercism/python/capstone_final_pipeline/spark_airflow_data_pipeline/docker/mysql_data:/var/lib/mysql
     jupyter-spark:
         image: jupyter/pyspark-notebook
         networks:
