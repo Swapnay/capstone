@@ -46,7 +46,7 @@ class AnalyticsEtl:
                 if unemployment_df.count() == 0:
                     continue
                 unemployment_df.createOrReplaceTempView(name.lower())
-                unemployment_df = self.convert_to_target_df(name)
+                unemployment_df = self.convert_to_target_df(name.lower())
                 unemployment_df = unemployment_df.select('variable_type', 'variable_name', 'submission_date', \
                                                           'year', 'month', 'unemployed_rate' )
 
@@ -62,8 +62,7 @@ class AnalyticsEtl:
         if name.lower() == 'unemployment_by_race':
             return self.get_data_by_race( name)
         elif name.lower() == 'unemployment_by_education_level':
-            return
-            #return self.get_data_by_education(name)
+            return self.get_data_by_education(name)
         elif name.lower() == 'unemployment_by_industry':
             return self.get_data_by_industry( name)
         else:
@@ -91,7 +90,7 @@ class AnalyticsEtl:
         return self.spark.sql(query)
 
     def get_data_by_state(self,  name):
-        query = ("SELECT 'state' AS variable_type,state_id," \
+        query = ("SELECT distinct 'state' AS variable_type,state_id," \
                          "unemployment_rate AS unemployed_rate, year(submission_date) AS year," \
                          "month(submission_date) AS month, submission_date " \
                  "FROM {} ORDER BY state_id,year,month").format(name.lower())

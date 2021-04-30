@@ -40,7 +40,7 @@ public class UnemploymentRateData {
     private double unemployedRate;
 
     @Column(name="submission_date",nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date submissionDate;
 
     public Long getId() {

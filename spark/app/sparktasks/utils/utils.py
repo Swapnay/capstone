@@ -35,5 +35,10 @@ class UdfUtils:
             return datetime.strptime(dateTimeStr, '%Y-%m-%d')
         return dateTimeStr
 
+    def convert_to_date_stocks(dateTimeStr):
+        if isinstance(dateTimeStr,str):
+            return datetime.strptime(dateTimeStr, '%Y-%m-%d %H:%M:%S')
+        return dateTimeStr
+
 
 

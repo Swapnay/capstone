@@ -6,19 +6,25 @@ from sparktasks.utils.config import Config
 import datetime
 import logging
 from pandas_datareader import data
-import  pyspark.sql.functions as F
+import pyspark.sql.functions as F
 
 
 class Extract:
     logger = logging.getLogger('sparktasks.housing.Extract')
+    sector_type = 'STOCKS'
 
     def __init__(self):
         self.DButils = DButils()
         self.spark = SparkSession.builder.appName('Extract').getOrCreate()
         self.config = Config()
         self.metadata_df = self.DButils.load_from_db(self.spark, self.config.metadata)
-        self.metadata_df.createGlobalTempView(self.config.metadata)
+        self.metadata_df = self.DButils.load_from_db(self.spark, self.get_metadata_query())
 
+        logging.info("initialization done")
+
+    def get_metadata_query(self):
+        return """(SELECT * FROM {} WHERE sector_type = '{}' AND sector_sub_type = '{}' ORDER BY execution_date desc) foo"""\
+            .format(self.config.metadata,self.sector_type,self.sector_type)
     # Extracts csv files from zillow.com
    # def extract_Stocks(self):  # ,**context):
         # ti = context['ti']
@@ -29,6 +35,10 @@ class Extract:
     # old data.
     def extract_from_source(self):
         try:
+            if self.metadata_df:
+                if self.metadata_df.filter(self.metadata_df.record_date == datetime.datetime.today()):
+                    return
+
             stocks_dict = dict(self.config.stocks)
             for key, value in stocks_dict.items():
                 logging.info("Data Extract in progress from %s", value)
@@ -63,6 +73,9 @@ class Extract:
 
     def write_raw(self, stocks):
         try:
+            if self.metadata_df:
+                if self.metadata_df.filter(self.metadata_df.record_date == datetime.datetime.today()):
+                    return
             stocks_dict = dict(stocks)
             table_name = self.config.stocks_raw
             for key, value in stocks_dict.items():
@@ -80,6 +93,9 @@ class Extract:
                         continue
 
                     self.DButils.save_to_db(stocks_raw, table_name)
+
+            self.DButils.insert_update_metadata(self.sector_type, 0, datetime.datetime.today(), self.sector_type,self.sector_type)
+
             logging.info("Created Raw table name %s", table_name)
         except Exception as ex:
             logging.error("Error in write_raw %s", ex)

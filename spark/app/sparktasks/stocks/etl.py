@@ -1,11 +1,11 @@
-from  sparktasks.stocks.extract import Extract
-from  sparktasks.stocks.transform_load import TransformLoad
+from sparktasks.stocks.extract import Extract
+from sparktasks.stocks.transform_load import TransformLoad
 class ETL:
 
     @staticmethod
     def extract():
         extract = Extract()
-        #extract.extract_from_source()
+        extract.extract_from_source()
         extract.store_raw_in_db()
 
     @staticmethod
@@ -13,6 +13,7 @@ class ETL:
         transform_load = TransformLoad()
         transform_load.transform_load_data()
 
+
 if __name__ == "__main__":
-    #ETL.extract()
+    ETL.extract()
     ETL.transform_load()

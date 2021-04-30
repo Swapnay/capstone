@@ -1,5 +1,5 @@
-from  sparktasks.housing.extract import Extract
-from  sparktasks.housing.transform_load import TransformLoad
+from sparktasks.housing.extract import Extract
+from sparktasks.housing.transform_load import TransformLoad
 class ETL:
 
     @staticmethod

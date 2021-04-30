@@ -69,6 +69,9 @@ class AnalyticsEtl:
 
     def load_analytics_data(self, ticker, sector):
         try:
+            if datetime.now().day != 1:
+                return
+
             stocks_raw = self.DButils.load_from_db(self.spark, self.get_table_query(ticker))
             if stocks_raw.count() == 0:
                 return

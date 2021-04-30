@@ -149,7 +149,7 @@ housing_analytics_tables = SparkSubmitOperator(
 
 start_daily>>extract_covid_data>>transform_load_data_covid>>covid_analytics_tables>>stop_daily
 start_daily>>extract_stock_data>>transform_load_data_stocks>>stock_analytics_tables>>stop_daily
-start_monthly>>extract_unemployment_data>>transform_load_data_unemployment>>analytics_unemployment>>stop_monthly
-start_monthly>>extract_housing_data>>transform_load_data_housing>>analytics_housing>>stop_monthly
+start_monthly>>extract_unemployment_data>>transform_load_data_unemployment>>employment_analytics_tables>>stop_monthly
+start_monthly>>extract_housing_data>>transform_load_data_housing>>housing_analytics_tables>>stop_monthly
 
 

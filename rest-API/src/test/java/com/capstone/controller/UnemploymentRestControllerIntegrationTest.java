@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         webEnvironment=SpringBootTest.WebEnvironment.MOCK,
@@ -45,7 +45,11 @@ public class UnemploymentRestControllerIntegrationTest {
 
     @Test
     public void getAllUnemploymentRateData() throws IOException, Exception {
-        mvc.perform(get("/api/unemploymentrate/").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/unemploymentrate/")
+                .with(user("admin")
+                .password("admin")
+                .roles("USER","ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -55,18 +59,26 @@ public class UnemploymentRestControllerIntegrationTest {
     @Test
     public void getUnemploymentRateDataRace() throws Exception {
 
-        mvc.perform(get("/api/unemploymentrate/race").contentType(MediaType.APPLICATION_JSON))
-          .andDo(print())
-          .andExpect(status().isOk())
-          .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(108))));
+        mvc.perform(get("/api/unemploymentrate/race")
+                .with(user("admin")
+                .password("admin")
+                .roles("USER","ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(108))));
 
     }
 
     @Test
     public void getUnemploymentRateDataIndustry() throws Exception {
 
-        mvc.perform(get("/api/unemploymentrate/industry").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/unemploymentrate/industry")
+                .with(user("admin")
+                .password("admin")
+                .roles("USER","ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -77,7 +89,11 @@ public class UnemploymentRestControllerIntegrationTest {
     @Test
     public void getCovidStateMonthlyDataBycountries() throws Exception {
 
-        mvc.perform(get("/api/unemploymentrate/states?states=CA,AZ,IN").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/unemploymentrate/states?states=CA,AZ,IN")
+                .with(user("admin")
+                .password("admin")
+                .roles("USER","ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

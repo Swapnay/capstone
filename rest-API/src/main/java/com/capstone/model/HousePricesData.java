@@ -40,7 +40,7 @@ public class HousePricesData {
     private double avgPrice;
 
     @Column(name="inventory_date",nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date submissionDate;
 
     @NotBlank

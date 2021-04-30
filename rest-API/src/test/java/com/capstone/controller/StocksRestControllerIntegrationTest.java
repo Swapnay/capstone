@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         webEnvironment=SpringBootTest.WebEnvironment.MOCK,
@@ -41,11 +41,15 @@ public class StocksRestControllerIntegrationTest {
     @Test
     public void getDataBySymbol() throws Exception {
 
-        mvc.perform(get("/api/stocks/MMM").contentType(MediaType.APPLICATION_JSON))
-          .andDo(print())
-          .andExpect(status().isOk())
-          .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(26))));
+        mvc.perform(get("/api/stocks/MMM")
+                .with(user("admin")
+                .password("admin")
+                .roles("USER","ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(26))));
 
     }
 

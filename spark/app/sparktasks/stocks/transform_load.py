@@ -69,7 +69,7 @@ class TransformLoad:
             stocks_fact = self.DButils.load_from_db(self.spark, self.get_table_query(ticker))
             if stocks_fact.count() == 0:
                 return
-            date_udf = udf(lambda d: UdfUtils.convert_to_date_world(d), DateType())
+            date_udf = udf(lambda d: UdfUtils.convert_to_date_stocks(d), DateType())
             stocks_fact = stocks_fact.fillna(0)
             stocks_fact = stocks_fact.withColumnRenamed("High", "high") \
                 .withColumnRenamed("Low", "low") \

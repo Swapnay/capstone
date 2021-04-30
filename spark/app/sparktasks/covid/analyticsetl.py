@@ -39,6 +39,8 @@ class AnalyticsEtl:
         return name
 
     def transform_load_analytics_tables(self):
+        if datetime.now().day != 1:
+            return
         self.transform_load_usa()
         self.transform_load_world()
 

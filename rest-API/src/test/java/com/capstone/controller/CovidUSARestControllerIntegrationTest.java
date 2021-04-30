@@ -1,5 +1,5 @@
 package  com.capstone.controller;
-
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
@@ -57,7 +57,11 @@ public class CovidUSARestControllerIntegrationTest {
 
     @Test
     public void getAllUSAStatesData() throws IOException, Exception {
-        mvc.perform(get("/api/covid/usa/").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/covid/usa/")
+                .with(user("admin")
+                .password("admin")
+                .roles("USER","ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -67,18 +71,26 @@ public class CovidUSARestControllerIntegrationTest {
     @Test
     public void getCovidStateMonthlyDataByStates() throws Exception {
 
-        mvc.perform(get("/api/covid/usa/states?states=CA,AZ").contentType(MediaType.APPLICATION_JSON))
-          .andDo(print())
-          .andExpect(status().isOk())
-          .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))));
+        mvc.perform(get("/api/covid/usa/states?states=CA,AZ")
+                .with(user("admin")
+                .password("admin")
+                .roles("USER","ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))));
 
     }
 
     @Test
     public void getCovidStateMonthlyDataByState() throws Exception {
 
-        mvc.perform(get("/api/covid/usa/states?states=CA,AZ").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/covid/usa/states?states=CA,AZ")
+                .with(user("admin")
+                .password("admin")
+                .roles("USER","ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

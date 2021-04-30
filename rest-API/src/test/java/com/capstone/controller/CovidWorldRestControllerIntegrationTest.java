@@ -1,5 +1,6 @@
 package  com.capstone.controller;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import java.io.IOException;
 
 import org.junit.Test;
@@ -45,7 +46,11 @@ public class CovidWorldRestControllerIntegrationTest {
 
     @Test
     public void getAllCountriesMonthlyData() throws IOException, Exception {
-        mvc.perform(get("/api/covid/world/").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/covid/world/")
+                .with(user("admin")
+                .password("admin")
+                .roles("USER","ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -55,18 +60,26 @@ public class CovidWorldRestControllerIntegrationTest {
     @Test
     public void getCovidMonthlyDataByCountry() throws Exception {
 
-        mvc.perform(get("/api/covid/world/countries/MUS").contentType(MediaType.APPLICATION_JSON))
-          .andDo(print())
-          .andExpect(status().isOk())
-          .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(2))));
+        mvc.perform(get("/api/covid/world/countries/MUS")
+                .with(user("admin")
+                .password("admin")
+                .roles("USER","ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(2))));
 
     }
 
     @Test
     public void getCovidStateMonthlyDataBycountries() throws Exception {
 
-        mvc.perform(get("/api/covid/world/countries?countries=MUS,AUT").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/covid/world/countries?countries=MUS,AUT")
+                .with(user("admin")
+                .password("admin")
+                .roles("USER","ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))

@@ -40,7 +40,7 @@ public class HouseInventory {
     private double days;
 
     @Column(name="inventory_date",nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date submissionDate;
 
     @NotBlank

@@ -1,5 +1,5 @@
-from  sparktasks.unemployment.extract import Extract
-from  sparktasks.unemployment.transform_load import TransformLoad
+from sparktasks.unemployment.extract import Extract
+from sparktasks.unemployment.transform_load import TransformLoad
 
 class ETL:
 
