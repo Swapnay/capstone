@@ -281,12 +281,20 @@ housing_data.to_csv("../datasets/housing_usa.csv")
 ```
 
 ## 4. Data model
-Using star schema.Data model is [here](https://github.com/Swapnay/capstone/tree/master/data_model/erd)
+Star Schema data model is [Here](https://github.com/Swapnay/capstone/tree/master/data_model/erd)
+Reasons for using Star Schemas
+ - Queries are simpler
+ - Easier business insights reporting
+ - Better-performing queries: 
+ - Provides data to OLAP systems: 
+
 
 ## 5. Data Exploration
-[Here](https://github.com/Swapnay/capstone/blob/master/eda/Covid_Economy_impact.ipynb)
+Initial Data exploratory analysis suggests An interesting correlation between COVID-19 and affected sectors.
+ EDA is [Here](https://github.com/Swapnay/capstone/blob/master/eda/Covid_Economy_impact.ipynb)
 
 ## 6 Spark data pipeline
 1.[Here](https://github.com/Swapnay/capstone/tree/master/toazureblob)
 ## References
 [Reference1](https://www.uaex.edu/life-skills-wellness/health/covid19/COVID-Economic_Impacts_in_Arkansas.aspx)
+[Reference2](https://www.xplenty.com/blog/snowflake-schemas-vs-star-schemas-what-are-they-and-how-are-they-different/#:~:text=Benefits%20of%20Star%20Schemas&text=Better%2Dperforming%20queries%3A%20By%20removing,schemas%20to%20build%20OLAP%20cubes.)
