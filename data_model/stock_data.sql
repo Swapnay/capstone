@@ -36,5 +36,18 @@ CREATE TABLE stocks_monthly_avg_return
     cosing_price FLOAT,
     UNIQUE(symbol, month,year)
 )ENGINE=InnoDB;
+DROP TABLE IF EXISTS `stocks_monthly`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `stocks_monthly` (
+  `symbol` text NOT NULL,
+  `category_name` text NOT NULL,
+  `year` int DEFAULT NULL,
+  `month` int DEFAULT NULL,
+  `monthly_return_rate` double DEFAULT NULL,
+  `monthly_avg` double DEFAULT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+);
 
 

@@ -12,8 +12,7 @@ from datetime import date
 from pyspark.sql.types import *
 import json
 from pyspark.sql.functions import year, month, dayofmonth, udf
-import  pyspark.sql.functions as F
-
+import pyspark.sql.functions as F
 
 from sparktasks.utils.utils import UdfUtils
 
@@ -41,23 +40,21 @@ class Extract:
 
     def __init__(self):
         self.DButils = DButils()
-        self.spark = SparkSession.builder.appName('ExtractCovid') \
-            .getOrCreate()
-            #.config("spark.ui.port", "4070") \
+        self.spark = SparkSession.builder\
+                                .appName('ExtractCovid') \
+                                .getOrCreate()
+        self.spark.conf.set("spark.sql.shuffle.partitions", 20)
 
         self.config = Config()
         self.metadata_df = self.DButils.load_from_db(self.spark, self.config.metadata)
         self.metadata_df.createGlobalTempView("metadata")
-
-    # op_kwargs , use provide_context=True
-    # dict_persons = {person['name']: person for person in list_persons}
 
     def get_filter_and_start_year(self, key):
         row = self.metadata_df.filter(self.metadata_df.sector_sub_type == key.lower()).first()
         if row:
             record_date = row[4]
             if record_date.month == 12:
-                return record_date.year+1
+                return record_date.year + 1
             return record_date.year
         return self.start_year
 
@@ -66,14 +63,14 @@ class Extract:
         if row:
             record_date = row[4]
             if record_date.month == 12:
-                return df_to_filter.filter((df_to_filter.Results_series_data_period >='M01')
-                                           & (df_to_filter.Results_series_data_year>record_date.year))
-            if record_date.month<10:
-                month_name = 'M0'+str(record_date.month)
+                return df_to_filter.filter((df_to_filter.Results_series_data_period >= 'M01')
+                                           & (df_to_filter.Results_series_data_year > record_date.year))
+            if record_date.month < 10:
+                month_name = 'M0' + str(record_date.month)
             else:
-                month_name = 'M'+str(record_date.month)
-            return df_to_filter.filter((df_to_filter.Results_series_data_period>month_name)
-                                       & (df_to_filter.Results_series_data_year>=record_date.year))
+                month_name = 'M' + str(record_date.month)
+            return df_to_filter.filter((df_to_filter.Results_series_data_period > month_name)
+                                       & (df_to_filter.Results_series_data_year >= record_date.year))
         return df_to_filter
 
     def extract_from_source(self):
@@ -113,13 +110,13 @@ class Extract:
                 file_path = join(self.config.data_dir, file_name)
                 logging.info("About to download unemployment data")
                 headers = {'Content-type': 'application/json'}
-                start_year= self.get_filter_and_start_year("unemployment_by_state_0")
+                start_year = self.get_filter_and_start_year("unemployment_by_state_0")
                 data = json.dumps({"seriesid": area_list[i:i + 25], "startyear": start_year,
                                    "endyear": self.end_year})
                 response = requests.post(self.api_url, data=data, headers=headers)
                 with open(file_path, 'wb') as outf:
                     outf.write(response.content)
-                logging.info("Extracted employment state data to %s",file_path)
+                logging.info("Extracted employment state data to %s", file_path)
         except Exception as ex:
             logging.error("Error extracting data extract_state_rate %s", ex)
             raise ex
@@ -138,12 +135,12 @@ class Extract:
                     flatten_df = self.flatten(spark_df)
                     split_udf = udf(lambda d: UdfUtils.get_code(d), StringType())
                     flatten_df = flatten_df.withColumn('Results_series_seriesID', split_udf(flatten_df.Results_series_seriesID))
-                    flatten_df = self.filter_df(flatten_df,name.lower())
-                    if flatten_df.count==0:
+                    flatten_df = self.filter_df(flatten_df, name.lower())
+                    if flatten_df.count == 0:
                         continue
-                    final_df = flatten_df.select("message","responseTime","status","Results_series_seriesID",
-                                                 "Results_series_data_period","Results_series_data_periodName",
-                                                 "Results_series_data_value","Results_series_data_year")
+                    final_df = flatten_df.select("message", "responseTime", "status", "Results_series_seriesID",
+                                                 "Results_series_data_period", "Results_series_data_periodName",
+                                                 "Results_series_data_value", "Results_series_data_year")
                     self.DButils.save_to_db(final_df, self.config.get_config('RAW', name))
 
         except Exception as ex:
@@ -175,6 +172,7 @@ class Extract:
         except Exception as ex:
             logging.error("Error extracting data flatten %s", ex)
             raise ex
+
 
 if __name__ == "__main__":
     extract = Extract()

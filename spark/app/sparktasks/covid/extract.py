@@ -5,6 +5,7 @@ from pyspark.sql import SparkSession
 from sparktasks.utils.DBUtils import DButils
 import pandas as pd
 import os
+import time
 
 
 class Extract:
@@ -12,24 +13,18 @@ class Extract:
 
     def __init__(self):
         self.DButils = DButils()
-        self.spark = SparkSession.builder.appName('CovidExtract')\
-                                         .getOrCreate()
-        #.config("spark.ui.port", "4080")
+        self.spark = SparkSession.builder\
+                                 .appName('CovidExtract')\
+                                 .getOrCreate()
+        self.spark.conf.set("spark.sql.shuffle.partitions", 20)
         self.config = Config()
         self.metadata_df = self.DButils.load_from_db(self.spark, self.config.metadata)
         self.metadata_df.createGlobalTempView("metadata")
 
-    # op_kwargs , use provide_context=True
-    # dict_persons = {person['name']: person for person in list_persons}
-
-    #def extract_covid19(self):
-        # ti = context['ti']
-        # metadata_dictionary = ti.xcom_pull(task_ids='extract_data',key="dag_last_run_details")
-        #self.extract_from_source()
-
     def extract_from_source(self):  # column_name,
         try:
             housing_dict = dict(self.config.covid19_source)
+            start_time=time.time()
             for key, value in housing_dict.items():
                 logging.info("extract raw data  from  %s", value)
                 covid_data = pd.read_csv(value)
@@ -39,6 +34,9 @@ class Extract:
                 #     covid_data = covid_data[(covid_data['submission_date'] > record_date)]
                 path = os.path.join(self.config.data_dir, key + ".csv")
                 covid_data.to_csv(path, index=False)
+            end_time = time.time()
+            print("it took this long to run run extract_from_source: {}".format(end_time-start_time))
+            logging.info("it took this long to run extract_from_source: {}".format(end_time-start_time))
         except Exception as ex:
             logging.error("Error extracting data %s", ex)
             raise ex

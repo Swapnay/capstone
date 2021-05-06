@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 
 # Airflow
-ARG AIRFLOW_VERSION=1.10.7
+ARG AIRFLOW_VERSION=1.10.14
 ARG AIRFLOW_HOME=/usr/local/airflow
 ARG AIRFLOW_DEPS=""
 ARG PYTHON_DEPS=""
@@ -49,6 +49,8 @@ RUN set -ex \
         default-libmysqlclient-dev \
         apt-utils \
         curl \
+        zip \
+        unzip \
         rsync \
         netcat \
         locales \
@@ -138,6 +140,10 @@ RUN chmod +x entrypoint.sh
 EXPOSE 8080 5555 8793
 
 USER airflow
+#WORKDIR /usr/local/spark/app
+#RUN  zip -r sparktasks.zip . -i . sparktasks
+
+#RUN cd /usr/local/spark/app &&
 WORKDIR ${AIRFLOW_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["webserver"]

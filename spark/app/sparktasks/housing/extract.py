@@ -7,6 +7,7 @@ from sparktasks.utils.config import Config
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 import logging
+import time
 
 
 class Extract:
@@ -16,6 +17,7 @@ class Extract:
         self.DButils = DButils()
         self.spark = SparkSession.builder.appName('HousingExtract').getOrCreate()
         self.config = Config()
+        self.spark.conf.set("spark.sql.shuffle.partitions", 20)
         self.metadata_df = self.DButils.load_from_db(self.spark, self.config.metadata)
         self.metadata_df.createGlobalTempView(self.config.metadata)
 
@@ -36,25 +38,8 @@ class Extract:
             housing_dict = dict(source_map)
             for key, value in housing_dict.items():
                 logging.info("Data Extract in progress from %s", value)
-                # if not os.path.isfile(value):
-                #     continue
                 housing_data = pd.read_csv(value)
                 data_dir = self.config.data_dir
-                columns = housing_data.columns
-                # row = self.metadata_df.filter(self.metadata_df.sector_sub_type == key).first()
-                # if row:
-                #     record_date = row[4]
-                #     date_time = record_date.strftime("%Y-%m-%d")
-                #     index_to = columns.get_loc(date_time)
-                #     index_from = columns.get_loc('1996-01-31')
-                #     if not index_from:
-                #         index_from = columns.get_loc('2004-09-30')
-                #     if not index_from:
-                #         index_from = columns.get_loc('2008-04-30')
-                #     if not index_from:
-                #         index_from = columns.get_loc('2018-01-31')
-                #     col_list = housing_data.columns[index_from:index_to + 1].values.tolist()
-                #     housing_data.drop(col_list, axis=1, inplace=True)
                 full_path = os.path.join(data_dir, key + ".csv")
                 housing_data.to_csv(full_path, index=False)
                 logging.info("Data Extracted to %s", full_path)
@@ -73,6 +58,7 @@ class Extract:
         data_dir = self.config.data_dir
         for name, value in housing_dict.items():
             try:
+                start_time = time.time()
                 housing_path = os.path.join(data_dir, name + ".csv")
                 logging.info("Started to create Raw table from %s", name)
                 file_name = os.path.basename(housing_path)
@@ -89,6 +75,9 @@ class Extract:
                 table_name = self.config.get_config('RAW', name)
                 self.DButils.save_to_db(housing_us_df,table_name, mode='overwrite' )
                 logging.info("Created Raw table name %s", table_name)
+                end_time = time.time()
+                print("It took this long to run write_raw: {}".format(end_time-start_time))
+                logging.info("It took this long to run write_raw: {}".format(end_time-start_time))
             except Exception as ex:
                 logging.error("Error in store_raw_in_db %s", ex)
                 raise ex

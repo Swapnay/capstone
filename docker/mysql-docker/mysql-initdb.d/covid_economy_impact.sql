@@ -650,6 +650,104 @@ LOCK TABLES `unemployment_series__dim` WRITE;
 INSERT INTO `unemployment_series__dim` VALUES (1,'A','ST0100000000000','Alabama',0,'T',1,''),(2,'A','ST0200000000000','Alaska',0,'T',146,''),(3,'A','ST0400000000000','Arizona',0,'T',188,''),(4,'A','ST0500000000000','Arkansas',0,'T',252,''),(5,'A','ST0600000000000','California',0,'T',378,''),(6,'A','ST0800000000000','Colorado',0,'T',763,''),(7,'A','ST0900000000000','Connecticut',0,'T',899,''),(8,'A','ST1000000000000','Delaware',0,'T',1091,''),(9,'A','ST1100000000000','District of Columbia',0,'T',1103,''),(10,'A','ST1200000000000','Florida',0,'T',1110,''),(11,'A','ST1300000000000','Georgia',0,'T',1318,''),(12,'A','ST1500000000000','Hawaii',0,'T',1569,''),(13,'A','ST1600000000000','Idaho',0,'T',1579,''),(14,'A','ST1700000000000','Illinois',0,'T',1659,''),(15,'A','ST1800000000000','Indiana',0,'T',1943,''),(16,'A','ST1900000000000','Iowa',0,'T',2124,''),(17,'A','ST2000000000000','Kansas',0,'T',2285,''),(18,'A','ST2100000000000','Kentucky',0,'T',2434,''),(19,'A','ST2200000000000','Louisiana',0,'T',2606,''),(20,'A','ST2300000000000','Maine',0,'T',2710,''),(21,'A','ST2400000000000','Maryland',0,'T',3283,''),(22,'A','ST2500000000000','Massachusetts',0,'T',3330,''),(23,'A','ST2600000000000','Michigan',0,'T',3728,''),(24,'A','ST2700000000000','Minnesota',0,'T',3949,''),(25,'A','ST2800000000000','Mississippi',0,'T',4119,''),(26,'A','ST2900000000000','Missouri',0,'T',4251,''),(27,'A','ST3000000000000','Montana',0,'T',4442,''),(28,'A','ST3100000000000','Nebraska',0,'T',4514,''),(29,'A','ST3200000000000','Nevada',0,'T',4632,''),(30,'A','ST3300000000000','New Hampshire',0,'T',4667,''),(31,'A','ST3400000000000','New Jersey',0,'T',4955,''),(32,'A','ST3500000000000','New Mexico',0,'T',5091,''),(33,'A','ST3600000000000','New York',0,'T',5156,''),(34,'A','ST3700000000000','North Carolina',0,'T',5358,''),(35,'A','ST3800000000000','North Dakota',0,'T',5575,''),(36,'A','ST3900000000000','Ohio',0,'T',5647,''),(37,'A','ST4000000000000','Oklahoma',0,'T',5879,''),(38,'A','ST4100000000000','Oregon',0,'T',6013,''),(39,'A','ST4200000000000','Pennsylvania',0,'T',6107,''),(40,'A','ST4400000000000','Rhode Island',0,'T',6292,''),(41,'A','ST4500000000000','South Carolina',0,'T',6340,''),(42,'A','ST4600000000000','South Dakota',0,'T',6437,''),(43,'A','ST4700000000000','Tennessee',0,'T',6523,''),(44,'A','ST4800000000000','Texas',0,'T',6695,''),(45,'A','ST4900000000000','Utah',0,'T',7244,''),(46,'A','ST5000000000000','Vermont',0,'T',7324,''),(47,'A','ST5100000000000','Virginia',0,'T',7611,''),(48,'A','ST5300000000000','Washington',0,'T',7810,''),(49,'A','ST5400000000000','West Virginia',0,'T',7925,''),(50,'A','ST5500000000000','Wisconsin',0,'T',8013,''),(51,'A','ST5600000000000','Wyoming',0,'T',8163,''),(52,'A','ST7200000000000','Puerto Rico',0,'T',8201,''),(53,'E','LNU01027659','less than high school',0,'T',1001,'P'),(54,'E','LNU01327659','less than high school',0,'T',1002,'PR'),(55,'E','LNU03027659','less than high school',0,'T',1002,'U'),(56,'E','LNU04027659','less than high school',0,'T',1003,'UR'),(57,'E','LNU01027660','high school grad',0,'T',1004,'P'),(58,'E','LNU01327660','high school grad',0,'T',1005,'PR'),(59,'E','LNU03027660','high school grad',0,'T',1006,'U'),(60,'E','LNU04027660','high school grad',0,'T',1007,'UR'),(61,'EC','LNU01027689','some college associate',0,'T',1008,'P'),(62,'EC','LNU01327689','some college associate',0,'T',1009,'PR'),(63,'EC','LNU03027689','some college associate',0,'T',1010,'U'),(64,'EC','LNU04027689','some college associate',0,'T',1011,'UR'),(65,'EU','LNU01027662','bachelors or higher college associate',0,'T',1012,'P'),(66,'EU','LNU01327662','bachelors or higher college associate',0,'T',1013,'PR'),(67,'EU','LNU03027662','bachelors or higher college associate',0,'T',1014,'U'),(68,'EU','LNU04027662','bachelors or higher college associate',0,'T',1015,'UR'),(69,'I','LNU03000000','total',0,'T',1001,'U'),(70,'I','LNU04000000','total',0,'T',1002,'R'),(71,'I','LNU03032231','construction',0,'T',1002,'U'),(72,'I','LNU04032231','construction',0,'T',1003,'R'),(73,'I','LNU03032232','manufacturing',0,'T',1004,'U'),(74,'I','LNU04032232','manufacturing',0,'T',1005,'R'),(75,'I','LNU03032236','transportation and utilities',0,'T',1006,'U'),(76,'I','LNU04032236','transportation and utilities',0,'T',1007,'R'),(77,'I','LNU03032239','professional business',0,'T',1008,'U'),(78,'I','LNU04032239','professional business',0,'T',1009,'R'),(79,'I','LNU03032240','education health care',0,'T',1010,'U'),(80,'I','LNU04032240','education health care',0,'T',1011,'R'),(81,'I','LNU03032241','leisure hospitality',0,'T',1012,'U'),(82,'I','LNU04032241','leisure hospitality',0,'T',1013,'R'),(83,'I','LNU03035109','agriculture related',0,'T',1014,'U'),(84,'I','LNU04035109','agriculture related',0,'T',1015,'R'),(85,'R','LNU00000003','white',0,'T',1001,'T'),(86,'R','LNU01000003','white',0,'T',1002,'P'),(87,'R','LNU01300003','white',0,'T',1002,'PR'),(88,'R','LNU03000003','white',0,'T',1003,'U'),(89,'R','LNU04000003','white',0,'T',1004,'UR'),(90,'R','LNU00000006','african american',0,'T',1005,'T'),(91,'R','LNU01000006','african american',0,'T',1006,'P'),(92,'R','LNU01300006','african american',0,'T',1007,'PR'),(93,'R','LNU03000006','african american',0,'T',1008,'U'),(94,'R','LNU04000006','african american',0,'T',1009,'UR'),(95,'R','LNU00032183','asian',0,'T',1010,'T'),(96,'R','LNU01032183','asian',0,'T',1011,'P'),(97,'R','LNU01332183','asian',0,'T',1012,'PR'),(98,'R','LNU03032183','asian',0,'T',1013,'U'),(99,'R','LNU04032183','asian',0,'T',1013,'UR'),(100,'R','LNU00000009','hispanic',0,'T',1014,'T'),(101,'R','LNU01000009','hispanic',0,'T',1015,'P'),(102,'R','LNU01300009','hispanic',0,'T',1014,'PR'),(103,'R','LNU03000009','hispanic',0,'T',1015,'U'),(104,'R','LNU04000009','hispanic',0,'T',1014,'UR');
 /*!40000 ALTER TABLE `unemployment_series__dim` ENABLE KEYS */;
 UNLOCK TABLES;
+
+DROP TABLE IF EXISTS `covid_usa_monthly`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `covid_usa_monthly` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `state` varchar(50) NOT NULL,
+  `month` tinyint NOT NULL,
+  `year` int NOT NULL,
+  `avg_new_cases` float DEFAULT NULL,
+  `monthly_new_cases` float DEFAULT NULL,
+  `avg_new_deaths` float DEFAULT NULL,
+  `monthly_new_deaths` float DEFAULT NULL,
+  `total_cases` float DEFAULT NULL,
+  `total_deaths` float DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `state` (`state`,`month`,`year`)
+) ;
+
+DROP TABLE IF EXISTS `covid_world_monthly`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `covid_world_monthly` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `country` varchar(50) NOT NULL,
+  `country_name` varchar(50) NOT NULL,
+  `month` tinyint NOT NULL,
+  `year` int NOT NULL,
+  `avg_new_cases` float DEFAULT NULL,
+  `monthly_new_cases` float DEFAULT NULL,
+  `avg_new_deaths` float DEFAULT NULL,
+  `monthly_new_deaths` float DEFAULT NULL,
+  `monthly_tests` float DEFAULT NULL,
+  `total_cases` float DEFAULT NULL,
+  `total_deaths` float DEFAULT NULL,
+  `population` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `country` (`country`,`month`,`year`)
+);
+
+CREATE TABLE home_prices_monthly
+(
+    id SERIAL PRIMARY KEY,
+    state VARCHAR(10) NOT NULL,
+    state_name VARCHAR(50) NOT NULL,
+    inventory_type ENUM('mid_tier', 'top_tier','bottom_tier', 'single_family',
+    'condo','1bd','2bd','3bd','4bd','5bd'),
+    avg_price DECIMAL(13,2) DEFAULT 0.00,
+    year INT NOT NULL,
+    month TiNYINT,
+    inventory_date Date,
+    UNIQUE(inventory_type,state, month,year)
+)ENGINE=InnoDB;
+
+CREATE TABLE home_inventory_monthly
+(
+    id SERIAL PRIMARY KEY,
+    state VARCHAR(10) NOT NULL,
+    state_name VARCHAR(50) NOT NULL,
+    inventory_type enum('days_to_pending','for_sale','median_sale_price','median_list_price','mean_price_cut','median_price_cut'),
+    days DECIMAL(13,2) DEFAULT 0.00,
+    year INT NOT NULL,
+    month TiNYINT,
+    inventory_date DATE,
+    UNIQUE(inventory_type,state, month,year)
+)ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `stocks_monthly`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `stocks_monthly` (
+  `symbol` text NOT NULL,
+  `category_name` text NOT NULL,
+  `year` int DEFAULT NULL,
+  `month` int DEFAULT NULL,
+  `monthly_return_rate` double DEFAULT NULL,
+  `monthly_avg` double DEFAULT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+  );
+
+DROP TABLE IF EXISTS `unemployment_monthly`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `unemployment_monthly` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `variable_type` varchar(50) NOT NULL,
+  `variable_name` varchar(40) NOT NULL,
+  `year` int NOT NULL,
+  `month` tinyint DEFAULT NULL,
+  `submission_date` date DEFAULT NULL,
+  `unemployed_rate` decimal(4,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `variable_type` (`variable_type`,`variable_name`,`month`,`year`)
+);
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

@@ -1,6 +1,6 @@
 from sparktasks.covid.extract import Extract
-from sparktasks.covid.transform_load import TransformLoad
-#class ETL:
+from  sparktasks.covid.transform_load import TransformLoad
+
 
 @staticmethod
 def extract():
@@ -13,6 +13,3 @@ def transform_load():
     transform_load = TransformLoad()
     transform_load.transform_load_data()
 
-# if __name__ == "__main__":
-#         #ETL.extract()
-#     ETL.transform_load()

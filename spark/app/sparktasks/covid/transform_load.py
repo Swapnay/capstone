@@ -7,6 +7,7 @@ import pyspark.sql.functions as f
 from sparktasks.utils.DBUtils import DButils
 from sparktasks.utils.config import Config
 from sparktasks.utils.utils import UdfUtils
+import time
 
 
 class TransformLoad:
@@ -15,10 +16,10 @@ class TransformLoad:
 
     def __init__(self):
         self.DButils = DButils()
-        self.spark = SparkSession.builder.appName('CovidTransformLoad') \
-            .getOrCreate()
-            #.config("spark.ui.port", "4080")\
-
+        self.spark = SparkSession.builder\
+                                 .appName('CovidTransformLoad') \
+                                 .getOrCreate()
+        self.spark.conf.set("spark.sql.shuffle.partitions", 20)
         self.config = Config()
         date_table = self.config.date_dim
         self.date_dim_df = self.DButils.load_from_db(self.spark, date_table)
@@ -59,6 +60,7 @@ class TransformLoad:
     def transform_load_world_data(self):
         try:
             logging.info("Transform and load world data")
+            start_time = time.time()
             self.spark.conf.set("spark.sql.execution.arrow.enabled", "False")
             covid_world_raw = self.config.covid_world_raw
             covid_world_df = self.DButils.load_from_db(self.spark, self.get_table_query(covid_world_raw))
@@ -99,9 +101,9 @@ class TransformLoad:
                                                 (covid_world_dt_df.year == self.date_dim_df.year), how="inner")
 
             covid_world = covid_world.withColumnRenamed("id", "date_id")
-            world_data_df = covid_world.select("date_id", "country_id", "submission_date", "new_deaths", "new_cases", "total_cases", "total_deaths", "icu_patients",
-                                               "hosp_patients", "weekly_icu_admissions", "weekly_hosp_admissions", "total_tests", "new_tests",
-                                               "tests_per_case", "positive_rate", "tests_units", "total_vaccinations", "people_vaccinated",
+            world_data_df = covid_world.select("date_id", "country_id", "submission_date", "new_deaths", "new_cases", "total_cases", "total_deaths",
+                                               "icu_patients","hosp_patients", "weekly_icu_admissions", "weekly_hosp_admissions", "total_tests",
+                                               "new_tests","tests_per_case", "positive_rate", "tests_units", "total_vaccinations", "people_vaccinated",
                                                "people_fully_vaccinated", "new_vaccinations", "stringency_index")
 
             covid_world_fact = self.config.covid_world_fact
@@ -113,12 +115,16 @@ class TransformLoad:
             self.DButils.insert_update_metadata(self.config.covid_world_sector, record_count, max_date,
                                                 self.config.covid_world_sector, self.sector_type)
             logging.info("successfully loaded covid world data till %s", max_date)
+            end_time = time.time()
+            print("it took this long to run: {}".format(end_time-start_time))
+            logging.info("it took this long to run: {}".format(end_time-start_time))
         except Exception as ex:
             logging.error("Error extracting data %s", ex)
             raise ex
 
     def transform_load_usa_data(self):
         try:
+            start_time = time.time()
             logging.info("Transform and load usa data")
             self.spark.conf.set("spark.sql.execution.arrow.enabled", "False")
             usa_df1 = self.DButils.load_from_db(self.spark, self.get_usa_table_query())
@@ -147,11 +153,17 @@ class TransformLoad:
                                          "total_deaths", "total_cases")
             if usa_data_df.count() == 0:
                 return
+            t0 = time.time()
             self.DButils.save_to_db(usa_data_df, self.config.covid_usa_fact)
             record_count = usa_data_df.count()
             self.DButils.insert_update_metadata(self.config.covid_usa_sector, record_count, max_date,
                                                 self.config.covid_usa_sector, self.sector_type)
+            t1 = time.time()
+            print("it took this save to db: {}".format(t1-t0))
             logging.info("successfully loaded covid USA data till %s", max_date)
+            end_time = time.time()
+            print("it took this long to run: {}".format(end_time-start_time))
+            logging.info("it took this long to run: {}".format(end_time-start_time))
         except Exception as ex:
             logging.error("Error transform data transform_load_usa_data %s", ex)
             raise ex

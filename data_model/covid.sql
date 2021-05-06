@@ -40,58 +40,6 @@ CREATE TABLE country_details_dim
 
 )ENGINE=InnoDB;
 
-CREATE TABLE covid_world_normalized_fact
-(
-    id SERIAL PRIMARY KEY,
-    date_id BIGINT UNSIGNED,
-    country_id BIGINT UNSIGNED,
-    submission_date TIMESTAMP NOT NULL,
-    new_deaths INT,
-    new_cases INT,
-    total_cases BIGINT,
-    total_deaths BIGINT,
-    icu_patients INT,
-    hosp_patients INT,
-    weekly_icu_admissions INT,
-    weekly_hosp_admissions INT,
-    total_tests BIGINT,
-    new_tests INT,
-    tests_per_case FLOAT,
-    positive_rate FLOAT,
-    tests_units VARCHAR(50),
-    total_vaccinations FLOAT,
-    people_vaccinated FLOAT,
-    people_fully_vaccinated FLOAT,
-    new_vaccinations FLOAT,
-    stringency_index FLOAT,
-    FOREIGN KEY (date_id) REFERENCES covid_date_dim(id),
-    FOREIGN KEY (country_id) REFERENCES country_details_dim(id),
-    UNIQUE(date_id, country_id)
-)ENGINE=InnoDB;
-
-
-
-CREATE TABLE covid_monthly_avg_table
-(
-    id SERIAL PRIMARY KEY,
-    country VARCHAR(50) NOT NULL,
-    month TINYint NOT NULL,
-    year INT NOT NULL,
-    avg_new_cases FLOAT,
-    avg_new_deaths FLOAT,
-    total_cases_per_million FLOAT,
-    total_deaths_per_million FLOAt,
-    new_tests_per_thousand FLOAT,
-    ranking INT,
-    UNIQUE(country, month,year)
-)ENGINE=InnoDB;
-
-
-
-
-
-
-
 CREATE TABLE covid_world_fact
 (
     id SERIAL PRIMARY KEY,
@@ -139,6 +87,23 @@ CREATE TABLE covid_world_fact
     FOREIGN KEY (date_id) REFERENCES covid_date_dim(id),
     FOREIGN KEY (country_id) REFERENCES country_dim(id)
 )ENGINE=InnoDB;
+
+
+CREATE TABLE covid_monthly_avg_table
+(
+    id SERIAL PRIMARY KEY,
+    country VARCHAR(50) NOT NULL,
+    month TINYint NOT NULL,
+    year INT NOT NULL,
+    avg_new_cases FLOAT,
+    avg_new_deaths FLOAT,
+    total_cases_per_million FLOAT,
+    total_deaths_per_million FLOAt,
+    new_tests_per_thousand FLOAT,
+    ranking INT,
+    UNIQUE(country, month,year)
+)ENGINE=InnoDB;
+
 CREATE TABLE state_dim
 (
     id SERIAL PRIMARY KEY,
@@ -426,3 +391,42 @@ INSERT INTO country_dim (country_name) VALUES('Virgin Islands (US)');
 INSERT INTO country_dim (country_name) VALUES('Yemen');  
 INSERT INTO country_dim (country_name) VALUES('Zambia');  
 INSERT INTO country_dim (country_name) VALUES('Zimbabwe');
+DROP TABLE IF EXISTS `covid_usa_monthly`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `covid_usa_monthly` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `state` varchar(50) NOT NULL,
+  `month` tinyint NOT NULL,
+  `year` int NOT NULL,
+  `avg_new_cases` float DEFAULT NULL,
+  `monthly_new_cases` float DEFAULT NULL,
+  `avg_new_deaths` float DEFAULT NULL,
+  `monthly_new_deaths` float DEFAULT NULL,
+  `total_cases` float DEFAULT NULL,
+  `total_deaths` float DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `state` (`state`,`month`,`year`)
+) ;
+DROP TABLE IF EXISTS `covid_world_monthly`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `covid_world_monthly` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `country` varchar(50) NOT NULL,
+  `country_name` varchar(50) NOT NULL,
+  `month` tinyint NOT NULL,
+  `year` int NOT NULL,
+  `avg_new_cases` float DEFAULT NULL,
+  `monthly_new_cases` float DEFAULT NULL,
+  `avg_new_deaths` float DEFAULT NULL,
+  `monthly_new_deaths` float DEFAULT NULL,
+  `monthly_tests` float DEFAULT NULL,
+  `total_cases` float DEFAULT NULL,
+  `total_deaths` float DEFAULT NULL,
+  `population` bigint DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `country` (`country`,`month`,`year`)
+);

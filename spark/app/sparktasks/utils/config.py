@@ -52,8 +52,12 @@ class Config:
         return self.config.items('UNEMPLOYMENT')
 
     @property
-    def stocks(self):
-        return self.config.items('STOCKS')
+    def stocks_sp(self):
+        return self.config.get('STOCKS','STOCKS_SP_500')
+
+    @property
+    def stocks_start_date(self):
+        return self.config.get('STOCKS','STOCKS_START_DATE')
 
     @property
     def state_dim(self):

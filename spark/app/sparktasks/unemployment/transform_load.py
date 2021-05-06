@@ -7,6 +7,7 @@ from sparktasks.utils.DBUtils import DButils
 from sparktasks.utils.utils import UdfUtils
 import pyspark.sql.functions as F
 from datetime import datetime
+import time
 
 
 class TransformLoad:
@@ -16,8 +17,10 @@ class TransformLoad:
     def __init__(self):
         self.DButils = DButils()
         self.config = Config()
-        self.spark = SparkSession.builder.appName('EmploymentTransformLoad').getOrCreate()
-        #.config("spark.ui.port", "4065")
+        self.spark = SparkSession.builder\
+                                 .appName('EmploymentTransformLoad')\
+                                 .getOrCreate()
+        self.spark.conf.set("spark.sql.shuffle.partitions", 20)
         self.spark.conf.set("spark.sql.crossJoin.enabled", "True")
         self.date_dim_df = self.DButils.load_from_db(self.spark, self.config.get_config('DIMS', 'HOUSING_DATE_DIM'))
         self.state_df = self.DButils.load_from_db(self.spark, self.config.state_dim)
@@ -190,6 +193,7 @@ class TransformLoad:
             try:
                 if name.endswith("25") | name.endswith("50"):
                     continue
+                start_time=time.time()
                 raw = self.config.get_config('RAW', name)
                 fact_table = self.config.get_config('FACTS', name)
                 query=self.get_table_query(name,raw)
@@ -217,6 +221,9 @@ class TransformLoad:
                 date_time_str = '{}-{}-{}'.format(year, month, '2')
                 date_time_obj = datetime.strptime(date_time_str, "%Y-%m-%d")
                 self.DButils.insert_update_metadata(name, record_count, date_time_obj, name, self.sector_type)
+                end_time = time.time()
+                print("it took this long to run transform_load_data {}: {}".format((end_time-start_time),raw))
+                logging.info("it took this long to run transform_load_data: {}".format(end_time-start_time))
             except Exception as ex:
                 logging.error("Error load data %s", name)
                 logging.error("Error load data %s", ex)

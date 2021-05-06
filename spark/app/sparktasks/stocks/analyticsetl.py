@@ -14,14 +14,15 @@ from datetime import datetime, timedelta
 
 class AnalyticsEtl:
     sector_type = 'STOCKS_MONTHLY_ANALYTICS'
-    logger = logging.getLogger('sparktasks.stock.AnalyticsEtl')
+    logger = logging.getLogger(' sparktasks.stock.AnalyticsEtl')
 
     def __init__(self):
         self.DButils = DButils()
         self.config = Config()
-        self.spark = SparkSession.builder.appName('StocksAnalyticsEtl') \
-            .getOrCreate()
-            #.config("spark.ui.port", "4065") \
+        self.spark = SparkSession.builder\
+                                 .appName('StocksAnalyticsEtl') \
+                                 .getOrCreate()
+        self.spark.conf.set("spark.sql.shuffle.partitions", 20)
 
         stcks_dim = self.config.stocks_dim
         self.stocks_dim_df = self.DButils.load_from_db(self.spark, stcks_dim)

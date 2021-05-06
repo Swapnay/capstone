@@ -5,6 +5,9 @@ from pyspark.sql.functions import year, month, dayofmonth
 from sparktasks.utils.DBUtils import DButils
 import pyspark.sql.functions as F
 from datetime import datetime
+from pyspark.sql.functions import broadcast
+from sparktasks.utils.utils import UdfUtils
+import time
 
 
 class TransformLoad:
@@ -16,8 +19,7 @@ class TransformLoad:
         self.config = Config()
         self.spark = SparkSession.builder.appName('HousingTransformLoad') \
             .getOrCreate()
-            #.config("spark.ui.port", "4080")\
-
+        self.spark.conf.set("spark.sql.shuffle.partitions", 20)
         self.spark.conf.set("spark.sql.crossJoin.enabled", "True")
         self.housing_date_dim = self.DButils.load_from_db(self.spark, self.config.housing_date_dim)
         self.state_df = self.DButils.load_from_db(self.spark, self.config.state_dim)
@@ -29,7 +31,7 @@ class TransformLoad:
 
     def get_metadata_query(self):
         return """(SELECT * FROM {} WHERE sector_type = '{}' ORDER BY execution_date desc limit 20) foo""".format(self.config.metadata,
-                                                                                                         self.sector_type)
+                                                                                                                  self.sector_type)
 
     def create_dim(self, sql_query, dim_table_name):
         city_dim_df = self.spark.sql(sql_query)
@@ -71,9 +73,10 @@ class TransformLoad:
 
     def transform_load(self, housing_dict, value_column, is_city=False):
         self.spark.conf.set("spark.sql.execution.arrow.enabled", "False")
+        start_time = time.time()
         for name in housing_dict.keys():
             raw = self.config.get_config('RAW', name)
-            logging.info("Extract load %s",raw)
+            logging.info("Extract load %s", raw)
             housing_df = self.DButils.load_from_db(self.spark, raw)
             housing_df.cache()
             housing_df.createGlobalTempView(raw)
@@ -96,38 +99,38 @@ class TransformLoad:
             if row:
                 record_date = row[4]
                 date_time = record_date.strftime("%Y-%m-%d")
-                index_to = columns.index(date_time)
                 index_from = columns.index('2018-01-31')
-                if '1996-01-31' in columns:
-                    index_from = columns.index('1996-01-31')
-                elif '2004-09-30' in columns:
-                    index_from = columns.index('2004-09-30')
-                elif '2008-04-30' in columns:
-                    index_from = columns.index('2008-04-30')
-                elif '2018-01-31' in columns:
-                    index_from = columns.index('2018-01-31')
+                for column in columns:
+                    try:
+                        start_date = UdfUtils.convert_to_date_world(column)
+                        index_from = columns.index(column)
+                        break
+                    except Exception as ex:
+                        logging.error("column is not a date column %s", ex)
+                        logging.info("column is not a date column %s", ex)
+                        continue
+                index_to = columns.index(date_time)
                 col_list = housing_df.columns[index_from:index_to + 1]
                 housing_df = housing_df.drop(*col_list)
 
-
             if is_city:
-                housing_df = housing_df.join(self.city_dim_df, (housing_df.RegionName == self.city_dim_df.city_name) &
+                housing_df = housing_df.join(broadcast(self.city_dim_df), (housing_df.RegionName == self.city_dim_df.city_name) &
                                              (housing_df.StateName == self.city_dim_df.state_name)
                                              & (housing_df.CountyName == self.city_dim_df.county_name),
                                              how="inner").withColumnRenamed("id", "city_id")
-                housing_city_metro = housing_df.join(self.metro_df, (housing_df.Metro == self.metro_df.metro_city_name)
+                housing_city_metro = housing_df.join(broadcast(self.metro_df), (housing_df.Metro == self.metro_df.metro_city_name)
                                                      & (housing_df.StateName == self.metro_df.state_name)
                                                      & (housing_df.CountyName == self.metro_df.county_name), how="inner") \
                     .withColumnRenamed("id", "metro_id")
             else:
-                housing_city_metro = housing_df.join(self.metro_df, (housing_df.RegionName == self.metro_df.metro_city_name)
+                housing_city_metro = housing_df.join(broadcast(self.metro_df), (housing_df.RegionName == self.metro_df.metro_city_name)
                                                      & (housing_df.StateName == self.metro_df.state_name)
                                                      , how="inner").withColumnRenamed("id", "metro_id")
 
-            housing_metro_state = housing_city_metro.join(self.state_df, (housing_city_metro.StateName == self.state_df.code)) \
+            housing_metro_state = housing_city_metro.join(broadcast(self.state_df), (housing_city_metro.StateName == self.state_df.code)) \
                 .withColumnRenamed("id", "state_id")
             if is_city:
-                housing_metro_state = housing_metro_state.join(self.county_df,
+                housing_metro_state = housing_metro_state.join(broadcast(self.county_df),
                                                                (housing_city_metro.CountyName == self.county_df.county_name)
                                                                & (housing_df.StateName == self.county_df.state_name)) \
                     .withColumnRenamed("id", "county_id")
@@ -138,7 +141,7 @@ class TransformLoad:
                 try:
                     date_time_obj = datetime.strptime(inventory_date, '%Y-%m-%d')
                 except Exception as ex:
-                    logging.error("column is not a date column %s",ex)
+                    logging.error("column is not a date column %s", ex)
                     continue
                 # date_args = (date_time_obj.month, date_time_obj.year, date_time_obj.month, date_time_obj.year)
                 housing_final = housing_metro_state.withColumnRenamed(inventory_date, value_column)
@@ -156,10 +159,14 @@ class TransformLoad:
                 else:
                     housing_final_df = housing_df.select('metro_id', 'date_id', 'inventory_date', 'state_id', 'inventory_type',
                                                          'value')
-                    housing_final_df.show()
+                    #housing_final_df.show()
                     self.DButils.save_to_db(housing_final_df, self.config.get_config('FACTS', 'HOUSING_INVENTORY'))
                 record_count = record_count + housing_final_df.count()
-                self.DButils.insert_update_metadata(name.lower(), record_count, date_time_obj, name,self.sector_type)
+                self.DButils.insert_update_metadata(name.lower(), record_count, date_time_obj, name, self.sector_type)
+
+            end_time = time.time()
+            print("It took this long to run load_stock_data: {}".format(end_time - start_time))
+            logging.info("It took this long to run load_stock_data: {}".format(end_time - start_time))
 
 
 if __name__ == "__main__":
