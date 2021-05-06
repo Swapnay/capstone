@@ -13,21 +13,35 @@ default_args1 = {
 }
 
 dag = DAG(
-    'covid19_stocks',
+    'covid19',
     schedule_interval='0 18 * * *',
     description='A simple DAG',
     default_args=default_args1)
+dag_stocks = DAG(
+    'stocks',
+    schedule_interval='0 18 * * *',
+    description='A Stocks DAG',
+    default_args=default_args1)
 
 dag_monthly = DAG(
-    'covid19_monthly',
-    schedule_interval='0 3 1 * *',
+    'unemployment_monthly',
+    schedule_interval='0 4 1 * *',
     description='Monthly dag',
+    default_args=default_args1)
+dag_housing = DAG(
+    'Housing_monthly',
+    schedule_interval='0 4 1 * *',
+    description='Housing Monthly dag',
     default_args=default_args1)
 
 start_daily = DummyOperator(task_id="start", dag=dag)
 stop_daily = DummyOperator(task_id="stop", dag=dag)
 start_monthly = DummyOperator(task_id="start", dag=dag_monthly)
 stop_monthly = DummyOperator(task_id="stop", dag=dag_monthly)
+start_stocks = DummyOperator(task_id="start_stocks", dag=dag_stocks)
+stop_stocks = DummyOperator(task_id="stop_stocksw", dag=dag_stocks)
+start_housing = DummyOperator(task_id="start_housing", dag=dag_housing)
+stop_housing = DummyOperator(task_id="stop_housing", dag=dag_housing)
 
 extract_point_covid = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","covid","extract.py")
 transform_load_point_covid = os.path.join(os.environ["SPARK_HOME"], "app", "sparktasks","covid","transform_load.py")
@@ -73,7 +87,7 @@ extract_stock_data = SparkSubmitOperator(
     jars=jars,
     name = "Extract Stocks Data",
     task_id='Extract_stocks_data',
-    dag=dag)
+    dag=dag_stocks)
 
 transform_load_data_stocks = SparkSubmitOperator(
     application=transform_load_point_stocks,
@@ -81,7 +95,7 @@ transform_load_data_stocks = SparkSubmitOperator(
     jars=jars,
     name = "Transform Stocks data",
     task_id='Transform_load_stocks_data',
-    dag=dag)
+    dag=dag_stocks)
 
 extract_unemployment_data = SparkSubmitOperator(
     application=extract_point_unemployment,
@@ -105,7 +119,7 @@ extract_housing_data = SparkSubmitOperator(
     jars=jars,
     name = "Extract housing Data",
     task_id='Extract_housing_data',
-    dag=dag_monthly)
+    dag=dag_housing)
 
 transform_load_data_housing = SparkSubmitOperator(
     application=transform_load_housing,
@@ -113,7 +127,7 @@ transform_load_data_housing = SparkSubmitOperator(
     jars=jars,
     name = "Transform housing data",
     task_id='Transform_load_housing_data',
-    dag=dag_monthly)
+    dag=dag_housing)
 
 covid_analytics_tables = SparkSubmitOperator(
     application=analytics_covid,
@@ -129,7 +143,7 @@ stock_analytics_tables = SparkSubmitOperator(
     jars=jars,
     name = "Analytics Stocks",
     task_id='Stock_analytics_tables',
-    dag=dag)
+    dag=dag_stocks)
 
 employment_analytics_tables = SparkSubmitOperator(
     application=analytics_unemployment,
@@ -145,11 +159,11 @@ housing_analytics_tables = SparkSubmitOperator(
     jars=jars,
     name = "Analytics housing",
     task_id='housing_analytics_tables',
-    dag=dag_monthly)
+    dag=dag_housing)
 
 start_daily>>extract_covid_data>>transform_load_data_covid>>covid_analytics_tables>>stop_daily
-start_daily>>extract_stock_data>>transform_load_data_stocks>>stock_analytics_tables>>stop_daily
+start_stocks>>extract_stock_data>>transform_load_data_stocks>>stock_analytics_tables>>stop_stocks
 start_monthly>>extract_unemployment_data>>transform_load_data_unemployment>>employment_analytics_tables>>stop_monthly
-start_monthly>>extract_housing_data>>transform_load_data_housing>>housing_analytics_tables>>stop_monthly
+start_housing>>extract_housing_data>>transform_load_data_housing>>housing_analytics_tables>>stop_housing
 
 

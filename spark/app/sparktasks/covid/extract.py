@@ -13,9 +13,7 @@ class Extract:
 
     def __init__(self):
         self.DButils = DButils()
-        self.spark = SparkSession.builder\
-                                 .appName('CovidExtract')\
-                                 .getOrCreate()
+        self.spark = SparkSession.builder.appName('CovidExtract').getOrCreate()
         self.spark.conf.set("spark.sql.shuffle.partitions", 20)
         self.config = Config()
         self.metadata_df = self.DButils.load_from_db(self.spark, self.config.metadata)
