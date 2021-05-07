@@ -31,12 +31,12 @@ class AnalyticsEtl:
     def get_table_query(self, name, sector_sub_type):
         record_date = self.get_record_start_date(sector_sub_type)
         date_time = record_date.strftime("%Y-%m-%d")
-        return """(SELECT * FROM {} WHERE  cast(inventory_date as Date)>= '{}') foo""".format(name, date_time)
+        return """(SELECT * FROM {} WHERE  inventory_date> '{}') foo""".format(name, date_time)
 
     def get_record_start_date(self, sector_sub_type):
         row = self.metadata_df.filter(self.metadata_df.sector_sub_type == sector_sub_type).first()
         record_date = datetime.now()
-        record_date = record_date.replace(year=2010, month=1, day=1)
+        record_date = record_date.replace(year=2015, month=1, day=1)
         if row:
             record_date = row[2]
             record_date = record_date + timedelta(days=1)
