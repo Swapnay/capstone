@@ -26,7 +26,7 @@ This capstone will try to provide visual view for below questions:
 Since the data is continuous, Current plan is to use line chart, column chart and combination of both.
 
 ## 2. Architecture
-![Architecture](https://drive.google.com/file/d/1ZZolWwqhpB_uUZ0Qi2G0prDDpBRM5U4a/view?usp=sharing)
+![Architecture](https://github.com/Swapnay/capstone/blob/master/docs/architecture.png)
 
 ## 3 Data sets
 In this section, we describe in detail how to get data from datasources.
@@ -34,9 +34,10 @@ All data selected is time series data
 
 |Sector|  COVID - 19   | S&P 500 Stock prices        |  Housing Market| Unemployment Rate|
 | ------------- | ------------- |---------|--------|----------------|  
-|Source| [World Data](https://covid19.who.int/)\n[USA DAte](https://data.cdc.gov)| Yahoo Finance  |[Zillow](https://www.zillow.com/research/data/|[Unemployment](https://www.bls.gov/webapps/legacy/cpsatab14.htm|
+|Source| [World Data](https://covid19.who.int/)\n[USA DAte](https://data.cdc.gov)| Yahoo Finance  |[Zillow](https://www.zillow.com/research/data/)|[Unemployment](https://www.bls.gov/webapps/legacy/cpsatab14.htm)|
 | Frequency| Daily |Daily|Monthly|Monthly|
 |Data Type|CSV|CSV|CSV|Table/Json|
+
 **Detailed information about data sources is captured in [Data-Extraction](https://github.com/Swapnay/capstone/wiki/Data-Extraction) **
 
 ## 4. Initial Data Exploration
