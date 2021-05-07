@@ -34,7 +34,7 @@ All data selected is time series data
 
 |Sector|  COVID - 19   | S&P 500 Stock prices        |  Housing Market| Unemployment Rate|
 | ------------- | ------------- |---------|--------|----------------|  
-|Source| [World Data](https://covid19.who.int/)\n[USA DAte](https://data.cdc.gov)| Yahoo Finance  |[Zillow](https://www.zillow.com/research/data/)|[Unemployment](https://www.bls.gov/webapps/legacy/cpsatab14.htm)|
+|Source| [World Data](https://covid19.who.int/) [USA Data](https://data.cdc.gov)| Yahoo Finance  |[Zillow.com](https://www.zillow.com/research/data/)|[bls.gov](https://www.bls.gov/webapps/legacy/cpsatab14.htm)|
 | Frequency| Daily |Daily|Monthly|Monthly|
 |Data Type|CSV|CSV|CSV|Table/Json|
 
@@ -42,7 +42,7 @@ All data selected is time series data
 
 ## 4. Initial Data Exploration
 Initial Data exploratory analysis suggests An interesting correlation between COVID-19 and affected sectors.
- EDA is [Here](https://github.com/Swapnay/capstone/blob/master/eda/Covid_Economy_impact.ipynb)
+ [EDA is Here](https://github.com/Swapnay/capstone/blob/master/eda/Covid_Economy_impact.ipynb)
 ## 5. Landing Zone:
  - Extracted Data files are saved to file system.
  - Raw tables with that data are created in Azure mysql
@@ -56,7 +56,7 @@ More information on different zones [Data-Zones](https://github.com/Swapnay/caps
 More information on different zones [Data-Zones](https://github.com/Swapnay/capstone/wiki/Data-Model) 
 
 ## 7. Data model 
-Star Schema data model is [Here](https://github.com/Swapnay/capstone/tree/master/data_model/erd)
+[Star Schema data model is Here](https://github.com/Swapnay/capstone/tree/master/data_model/erd)
 Reasons for using Star Schemas
  - Queries are simpler
  - Easier business insights reporting
@@ -73,10 +73,10 @@ Apache Airflow is used for below reasons:
 
 More details on [project wiki](https://github.com/Swapnay/capstone/wiki/ETL-ELT-Workflow-Orchestration) 
 and [DAGS folder](https://github.com/Swapnay/capstone/tree/master/dags)
-ETL DAG run for Stocks data
 
+ETL DAG run for Stocks data
 ![Example-Dag-Run](https://github.com/Swapnay/capstone/blob/master/docs/dag-exec/Stocks.png)
-[Stocks Dag Run]
+
 
 ## 9 Rest API 
 
@@ -95,8 +95,12 @@ Observations from data loaded:
 
 ![Sector](https://github.com/Swapnay/capstone/blob/master/docs/images/sector.png)
 
-* States with most unemployment rate
+* States with most unemployment rate - Nevada, Hawaii have most unemployment rate as these 2 states dependant on tourism.
+In addition Nevada , like Michigan is also dependant on Manufacturing and Mining.
 ![State](https://github.com/Swapnay/capstone/blob/master/docs/images/Unemployment-covid.png)
+
+For more plots [Look at python note book](https://github.com/Swapnay/capstone/blob/master/notebooks/capstone_final.ipynb)
+[And also exploratory data analysis](https://github.com/Swapnay/capstone/blob/master/eda/Covid_Economy_impact.ipynb)
 
 
 
