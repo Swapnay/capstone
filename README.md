@@ -36,20 +36,25 @@ All data selected is time series data
 | ------------- | ------------- |---------|--------|----------------|  
 |Source| [World Data](https://covid19.who.int/) [USA Data](https://data.cdc.gov)| Yahoo Finance  |[Zillow.com](https://www.zillow.com/research/data/)|[bls.gov](https://www.bls.gov/webapps/legacy/cpsatab14.htm)|
 | Frequency| Daily |Daily|Monthly|Monthly|
-|Data Type|CSV|CSV|CSV|Table/Json|
+|Data Type|CSV|CSV|CSV|Table/JSON|
 
 **Detailed information about data sources is captured in [Data-Extraction](https://github.com/Swapnay/capstone/wiki/Data-Extraction) **
 
-## 4. Initial Data Exploration
-Initial Data exploratory analysis suggests An interesting correlation between COVID-19 and affected sectors.
- [EDA is Here](https://github.com/Swapnay/capstone/blob/master/eda/Covid_Economy_impact.ipynb)
-## 5. Landing Zone:
+
+## 4. Landing Zone:
  - Extracted Data files are saved to file system.
  - Raw tables with that data are created in Azure mysql
  Example landing zone in cloud (Amazon S3 / Azure Blog storage)
 More information on different zones [Data-Zones](https://github.com/Swapnay/capstone/wiki/Data-Model) 
-## 6 Data Transformation using Apache Spark
-1.[Here](https://github.com/Swapnay/capstone/tree/master/toazureblob)
+## 5 Data Transformation 
+Reasons for using Apache Spark for data transformation:
+- Spark is capable of handling several peta bytes of data at a time, distributed across a cluster 
+of thousands of cooperating physical or virtual servers.
+- Supports languages such as Java, Python, R, and Scala and integration of leading storage solutions.
+- Simple to use with rich aet of APIs
+- Speed
+[More about the configuration is here](https://github.com/Swapnay/capstone/wiki/Data-Transformation-Using-Apache-Spark)
+
 ## 6. Processed Zone (Data Load):
 - Data from landing zone is transformed using processing engine and loaded in to structured tables.
 - In this case it is mysql /Azure mysql.
@@ -63,7 +68,11 @@ Reasons for using Star Schemas
  - Better-performing queries: 
  - Provides data to OLAP systems: 
  
-## 8 ETL/ELT workflow Orchestration 
+## 8. Initial Data Exploration
+Initial Data exploratory analysis suggests An interesting correlation between COVID-19 and affected sectors.
+ [EDA is Here](https://github.com/Swapnay/capstone/blob/master/eda/Covid_Economy_impact.ipynb)
+ 
+## 9 ETL/ELT workflow Orchestration 
 Now that we have ETL pipeline in place, how do we  schedule daily or monthly while integrating all dependencies
 Apache Airflow is used for below reasons: 
 - Dynamic Pipeline Generation ( DAG configuration as code )
@@ -77,22 +86,30 @@ and [DAGS folder](https://github.com/Swapnay/capstone/tree/master/dags)
 ETL DAG run for Stocks data
 ![Example-Dag-Run](https://github.com/Swapnay/capstone/blob/master/docs/dag-exec/Stocks.png)
 
+## 10 Spark and Azure Mysql Optimisation
+In development lifecycle, More time os spent on optimising and maintaining the code than on writing it.
+Following areas we
+- Code optimization
+- Increase Compute size and storage Azure Mysql 
+- Dynamically selecting batch size based on source.
+- Spark optimization 
 
-## 9 Rest API 
+[More on optimisation is Here](https://github.com/Swapnay/capstone/wiki/Optimization---Spark-and-Azure-Mysql)
+
+## 11 Rest API 
 
  * Java Springboot REST API.
  * API interfaces to Stocks,COVID, Unemployment Rate, and Housing data monthly average tables.
  * Spring Boot, Swagger, JPA
- [Instructions to checkout](https://github.com/Swapnay/capstone/blob/master/rest-API/Readme.md)
+ * [For More Info Checkout Here](https://github.com/Swapnay/capstone/blob/master/rest-API/Readme.md)
 
-## 10 Jupyter Notebook Integration - Correlation plots 
+## 12 Jupyter Notebook Integration - Correlation plots 
 * Docker jupyter notebook integration using image jupyter/pyspark-notebook enables end user analyse data.
 * User can either use spark in driver mode or submit  to spark cluster running in standalone mode.
 * End user may also call above REST API to get aggregated data.
 Observations from data loaded:
 
 * Leisure and Hospitality sector had most job losses. Construction, Transportation and utilities is second in the list.
-
 ![Sector](https://github.com/Swapnay/capstone/blob/master/docs/images/sector.png)
 
 * States with most unemployment rate - Nevada, Hawaii have most unemployment rate as these 2 states dependant on tourism.
@@ -107,3 +124,5 @@ For more plots [Look at python note book](https://github.com/Swapnay/capstone/bl
 ## References
 [Reference1](https://www.uaex.edu/life-skills-wellness/health/covid19/COVID-Economic_Impacts_in_Arkansas.aspx)
 [Reference2](https://www.xplenty.com/blog/snowflake-schemas-vs-star-schemas-what-are-they-and-how-are-they-different/#:~:text=Benefits%20of%20Star%20Schemas&text=Better%2Dperforming%20queries%3A%20By%20removing,schemas%20to%20build%20OLAP%20cubes.)
+[Reference3](https://developer.hpe.com/blog/spark-101-what-is-it-what-it-does-and-why-it-matters/)
+[Reference4](https://www.syntelli.com/eight-performance-optimization-techniques-using-spark)
