@@ -1,6 +1,7 @@
 from sparktasks.unemployment.extract import Extract
 from sparktasks.unemployment.transform_load import TransformLoad
 
+
 class ETL:
 
     @staticmethod
@@ -14,8 +15,7 @@ class ETL:
         transform_load = TransformLoad()
         transform_load.transform_load_data()
 
+
 if __name__ == "__main__":
     ETL.extract()
     ETL.transform_load()
-
-

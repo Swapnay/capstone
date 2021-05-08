@@ -27,7 +27,7 @@ class TransformLoad:
         self.metro_df = self.DButils.load_from_db(self.spark, self.config.metro_dim)
         self.county_df = self.DButils.load_from_db(self.spark, self.config.county_dim)
         self.metadata_df = self.DButils.load_from_db(self.spark, self.get_metadata_query())
-        logging.info("initialization done")
+        self.logger.info("initialization done")
 
     def get_metadata_query(self):
         return """(SELECT * FROM {} WHERE sector_type = '{}' ORDER BY execution_date desc limit 20) foo""".format(self.config.metadata,
@@ -143,7 +143,6 @@ class TransformLoad:
                 except Exception as ex:
                     logging.error("column is not a date column %s", ex)
                     continue
-                # date_args = (date_time_obj.month, date_time_obj.year, date_time_obj.month, date_time_obj.year)
                 housing_final = housing_metro_state.withColumnRenamed(inventory_date, value_column)
                 housing_final = housing_final.withColumn('inventory_date', F.lit(date_time_obj)) \
                     .withColumn('inventory_type', F.lit(name.lower()))
@@ -159,14 +158,12 @@ class TransformLoad:
                 else:
                     housing_final_df = housing_df.select('metro_id', 'date_id', 'inventory_date', 'state_id', 'inventory_type',
                                                          'value')
-                    #housing_final_df.show()
                     self.DButils.save_to_db(housing_final_df, self.config.get_config('FACTS', 'HOUSING_INVENTORY'))
                 record_count = record_count + housing_final_df.count()
                 self.DButils.insert_update_metadata(name.lower(), record_count, date_time_obj, name, self.sector_type)
 
             end_time = time.time()
-            print("It took this long to run load_stock_data: {}".format(end_time - start_time))
-            logging.info("It took this long to run load_stock_data: {}".format(end_time - start_time))
+            self.logger.info("It took this long to run load_stock_data: {}".format(end_time - start_time))
 
 
 if __name__ == "__main__":

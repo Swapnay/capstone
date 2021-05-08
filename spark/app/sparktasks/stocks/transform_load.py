@@ -21,14 +21,14 @@ class TransformLoad:
         self.DButils = DButils()
         self.config = Config()
         self.spark = SparkSession.builder\
-                                 .appName('StocksTransformLoadc')\
+                                 .appName('StocksTransformLoad')\
                                  .getOrCreate()
         self.spark.conf.set("spark.sql.shuffle.partitions", 20)
         date_table = self.config.date_dim
         self.stocks_dim_df = self.DButils.load_from_db(self.spark, self.config.stocks_dim)
         self.metadata_df = self.DButils.load_from_db(self.spark, self.get_metadata_query())
         self.date_dim_df = self.DButils.load_from_db(self.spark, date_table)
-        logging.info("initialization done")
+        self.logger.info("initialization done")
 
     def get_metadata_query(self):
         return """(SELECT * FROM {} WHERE sector_sub_type = '{}' and  sector_type = '{}' ORDER BY execution_date desc) foo""".format(self.config.metadata,
@@ -76,7 +76,7 @@ class TransformLoad:
         if stocks_fact.count() == 0:
             return
         print("partitions {}".format(stocks_fact.rdd.getNumPartitions()))
-        date_udf = udf(lambda d: UdfUtils.convert_to_date_stocks(d), DateType())
+        date_udf = udf(lambda d: UdfUtils.convert_to_date_world(d), DateType())
         stocks_fact = stocks_fact.fillna(0)
         stocks_fact = stocks_fact.withColumnRenamed("High", "high") \
             .withColumnRenamed("Low", "low") \
@@ -96,15 +96,13 @@ class TransformLoad:
         stocks_fact_df = stocks_fact_df.select("stock_id", "date_id", "stock_date", "open_price", "closing_price",
                                                "high", "low", "volume")
 
-        print("partitions {}".format(stocks_fact.rdd.getNumPartitions()))
         stocks_fact_df.explain(True)
         self.DButils.save_to_db(stocks_fact_df, self.config.stocks_fact)
         max_date = stocks_fact_df.select(F.max("stock_date")).first()[0]
         record_count = stocks_fact_df.count()
         self.DButils.insert_update_metadata(self.sector_type, record_count, max_date, self.sector_type, self.sector_type)
         end_time = time.time()
-        print("it took this long to run load_stock_data: {}".format(end_time - start_time))
-        logging.info("it took this long to run load_stock_data: {}".format(end_time - start_time))
+        self.logger.info("it took this long to run load_stock_data: {}".format(end_time - start_time))
 
 
 if __name__ == "__main__":

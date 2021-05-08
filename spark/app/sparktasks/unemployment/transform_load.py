@@ -11,7 +11,7 @@ import time
 
 
 class TransformLoad:
-    logger = logging.getLogger('sparktasks.employment.TransformLoad')
+    logger = logging.getLogger('sparktasks.unemployment.TransformLoad')
     sector_type ='UNEMPLOYMENT'
 
     def __init__(self):
@@ -62,7 +62,7 @@ class TransformLoad:
 
     def get_data_by_state(self, unemployment_df, name):
         try:
-            logging.info(" load data %s", name)
+            self.logger.info(" load data %s", name)
             unemployment_df.createGlobalTempView(name)
             view_name = "{}.{}".format("global_temp", name)
             self.spark.read.table(view_name)
@@ -76,17 +76,16 @@ class TransformLoad:
             total_df = total_df.filter(total_df.unemployment_rate!='-')
             return total_df.select('date_id', 'state_id', 'unemployment_rate','submission_date')
         except Exception as ex:
-            logging.error("Error load data %s", name)
-            logging.error("Error load data %s", ex)
+            self.logger.error("Error load data %s", name)
+            self.logger.error("Error load data %s", ex)
             raise ex
 
     def get_data_by_industry(self, unemployment_df, name):
         try:
-            logging.info(" load data %s", name)
+            self.logger.info(" load data %s", name)
             unemployment_df.createGlobalTempView(name)
             view_name = "{}.{}".format("global_temp", name)
             self.spark.read.table(view_name)
-
             query = "SELECT id ,area_text AS industry_type,Results_series_data_value AS {}{} " \
                     "FROM {} where area_type_code =\'I\' AND stat_type = {} "
             union1 = query.format('unemployment',', submission_date', view_name, "\'U\'")
@@ -101,13 +100,13 @@ class TransformLoad:
             total_df = total_df.filter(total_df.unemployment_rate!='-')
             return total_df.select('date_id', 'industry_type', 'unemployment', 'unemployment_rate', 'submission_date')
         except Exception as ex:
-            logging.error("Error load data %s", name)
-            logging.error("Error load data %s", ex)
+            self.logger.error("Error load data %s", name)
+            self.logger.error("Error load data %s", ex)
             raise ex
 
     def get_data_by_education(self, unemployment_df, name):
         try:
-            logging.info(" load data %s", name)
+            self.logger.info(" load data %s", name)
             unemployment_df.createGlobalTempView(name)
             view_name = "{}.{}".format("global_temp", name)
             self.spark.read.table(view_name)
@@ -138,13 +137,13 @@ class TransformLoad:
             return final_unemp_df.select('date_id', 'education', 'participated', 'participated_rate',
                                          'unemployed', 'unemployed_rate', 'submission_date')
         except Exception as ex:
-            logging.error("Error load data %s", name)
-            logging.error("Error load data %s", ex)
+            self.logger.error("Error load data %s", name)
+            self.logger.error("Error load data %s", ex)
             raise ex
 
     def get_data_by_race(self, unemployment_df, name):
         try:
-            logging.info(" load data %s", name)
+            self.logger.info(" load data %s", name)
             unemployment_df.createGlobalTempView(name)
             view_name = "{}.{}".format("global_temp", name)
             self.spark.read.table(view_name)
@@ -184,8 +183,8 @@ class TransformLoad:
             return final_unemp_df.select('date_id', 'race_type', 'civilian_noninstitutional', 'participated',
                                          'participated_rate', 'unemployed', 'unemployed_rate','submission_date')
         except Exception as ex:
-            logging.error("Error load data %s", name)
-            logging.error("Error load data %s", ex)
+            self.logger.error("Error load data %s", name)
+            self.logger.error("Error load data %s", ex)
             raise ex
 
     def transform_load_data(self):
@@ -222,11 +221,10 @@ class TransformLoad:
                 date_time_obj = datetime.strptime(date_time_str, "%Y-%m-%d")
                 self.DButils.insert_update_metadata(name, record_count, date_time_obj, name, self.sector_type)
                 end_time = time.time()
-                print("it took this long to run transform_load_data {}: {}".format((end_time-start_time),raw))
-                logging.info("it took this long to run transform_load_data: {}".format(end_time-start_time))
+                self.logger.info("it took this long to run transform_load_data: {}".format(end_time-start_time))
             except Exception as ex:
-                logging.error("Error load data %s", name)
-                logging.error("Error load data %s", ex)
+                self.logger.error("Error load data %s", name)
+                self.logger.error("Error load data %s", ex)
                 raise ex
 
 

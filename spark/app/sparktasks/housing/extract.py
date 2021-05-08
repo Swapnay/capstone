@@ -60,7 +60,7 @@ class Extract:
             try:
                 start_time = time.time()
                 housing_path = os.path.join(data_dir, name + ".csv")
-                logging.info("Started to create Raw table from %s", name)
+                self.logger.info("Started to create Raw table from %s", name)
                 file_name = os.path.basename(housing_path)
                 self.spark.sparkContext.addFile(housing_path)
                 housing_us_df = self.spark.read.csv('file://' + housing_path, header=True, inferSchema=True)
@@ -69,18 +69,18 @@ class Extract:
                     housing_us_df = housing_us_df.withColumn("RegionName", split_udf(housing_us_df.RegionName))
                 print(housing_us_df.columns)
                 housing_us_df = housing_us_df.fillna(0)
-                if housing_us_df.count()==0:
+                if housing_us_df.count() == 0:
                     return
 
                 table_name = self.config.get_config('RAW', name)
-                self.DButils.save_to_db(housing_us_df,table_name, mode='overwrite' )
-                logging.info("Created Raw table name %s", table_name)
+                self.DButils.save_to_db(housing_us_df, table_name, mode='overwrite')
+                self.logger.info("Created Raw table name %s", table_name)
                 end_time = time.time()
-                print("It took this long to run write_raw: {}".format(end_time-start_time))
-                logging.info("It took this long to run write_raw: {}".format(end_time-start_time))
+                self.logger.info("It took this long to run write_raw: {}".format(end_time - start_time))
             except Exception as ex:
-                logging.error("Error in store_raw_in_db %s", ex)
+                self.logger.error("Error in store_raw_in_db %s", ex)
                 raise ex
+
 
 if __name__ == "__main__":
     extract = Extract()

@@ -23,12 +23,10 @@ class AnalyticsEtl:
                                  .appName('StocksAnalyticsEtl') \
                                  .getOrCreate()
         self.spark.conf.set("spark.sql.shuffle.partitions", 20)
-
         stcks_dim = self.config.stocks_dim
         self.stocks_dim_df = self.DButils.load_from_db(self.spark, stcks_dim)
         self.metadata_df = self.DButils.load_from_db(self.spark, self.get_metadata_query())
-
-        logging.info("initialization done")
+        self.logger.info("initialization done")
 
     def get_metadata_query(self):
         return """(SELECT * FROM {} WHERE sector_type = '{}' 
@@ -133,7 +131,7 @@ class AnalyticsEtl:
             self.DButils.insert_update_metadata(ticker, stocks_monthly_df.count(), max_date,
                                                 ticker, self.sector_type)
         except Exception as ex:
-            logging.error("Error generate aggregate tables %s", ex)
+            self.logger.error("Error generate aggregate tables %s", ex)
             raise ex
 
 

@@ -1,10 +1,8 @@
 import logging
 from sparktasks.utils.config import Config
 import mysql.connector
-
 from datetime import datetime
 import time
-
 
 class DButils:
     logger = logging.getLogger('sparktasks.utils.DButils')
@@ -25,8 +23,7 @@ class DButils:
             upperBound=upper,
             numPartitions=partitions).load()
         time_end = time.time()
-        logging.info("It took this long to run load_from_db_with_partitions {}: Query {}".format((time_end - time_start), table_name))
-        print("Time took to run load_from_db {} query {}".format(table_name, time_end - time_start))
+        self.logger.info("It took this long to run load_from_db_with_partitions {}: Query {}".format((time_end - time_start), table_name))
         return spark_df
 
     def load_from_db(self, spark, table_name):
@@ -38,7 +35,7 @@ class DButils:
             user=self.config.mysql_user,
             password=self.config.mysql_password).load()
         time_end = time.time()
-        print("Time took to run load_from_db {} query {}".format(table_name, time_end - time_start))
+        self.logger.info("Time took to run load_from_db {} query {}".format(table_name, time_end - time_start))
         return spark_df
 
     def save_to_db(self, spark_df, table_name, mode='append'):
@@ -51,14 +48,14 @@ class DButils:
                 user=self.config.mysql_user,
                 password=self.config.mysql_password,
                 batchsize=50000,
-                isolationLevel='NONE',
-                truncate=True
+                isolationLevel='NONE'
             ).mode(mode).save()
             time_end = time.time()
-            print("Time took to DButils.save {} query {}".format(table_name, time_end - time_start))
+            self.logger.info("Time took to DButils.save {} query {}".format(table_name, time_end - time_start))
 
         except ValueError as e:
-            print(e)
+            self.logger.info(e)
+            raise e
 
     def save_to_db_with_partition(self, spark_df, table_name, mode='append',repartition_count=20,batch_size=50000, column='id'):
         try:
@@ -77,7 +74,8 @@ class DButils:
             print("Time took to DButils.save {} query {}".format(table_name, time_end - time_start))
 
         except ValueError as e:
-            print(e)
+            self.logger.info(e)
+            raise e
 
     def get_connection(self):
         connection = None
@@ -88,7 +86,8 @@ class DButils:
                                                  port=self.config.mysql_port,
                                                  database=self.config.mysql_db_name)
         except Exception as error:
-            print("Error while connecting to database", error)
+            self.logger.info("Error while connecting to database", error)
+            raise error
 
         return connection
 
@@ -111,25 +110,3 @@ class DButils:
         time_end = time.time()
         print("Time took to insert_update_metadata {} query {}".format(sl, time_end - time_start))
 
-    class MetadataUtils:
-
-        def get_last_exec_date(self):  # , **context):
-            # type_map = self.config.get_by_type(sector_type)
-
-            # type_keys = "','".join(dict(type_map).keys())
-            # types = '{}{}{}'.format("'",type_keys,"'")
-            self.spark.read.table("global_temp.metadata")
-
-            # sql = 'SELECT * FROM global_temp.metadata WHERE sector_sub_type IN ({}) ORDER BY execution_date DESC LIMIT {};'.format(types,length)
-            sql = ' SELECT sector_sub_type, execution_date, record_date, other_data ' \
-                  'FROM ' \
-                  '(SELECT sector_sub_type, record_date,execution_date, other_data,rank() ' \
-                  'OVER (PARTITION BY sector_sub_type ORDER BY execution_date DESC) as rank1 ' \
-                  'FROM global_temp.metadata) tmp  WHERE rank1 = 1'
-            spark_df = self.spark.sql(sql)
-            df = spark_df.select('sector_sub_type', 'record_date', 'other_data')
-            dict_val = map(lambda row: row.asDict(), df.collect())
-            last_run_details = [(r['sector_sub_type'], r['record_date']) for r in dict_val]
-            dim_loaded_details = [(r['sector_sub_type'], r['other_data']) for r in dict_val]
-            # task_instance = context['ti']
-            self.metadata_dicts = dict(last_run_details)

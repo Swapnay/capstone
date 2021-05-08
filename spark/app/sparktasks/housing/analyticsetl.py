@@ -8,6 +8,7 @@ import pyspark.sql.functions as F
 
 class AnalyticsEtl:
     sector_type = 'HOUSING_ANALYTICS'
+    logger = logging.getLogger('sparktasks.housing.AnalyticsEtl')
 
     def __init__(self):
         self.DButils = DButils()
@@ -20,7 +21,7 @@ class AnalyticsEtl:
         self.spark.conf.set("spark.sql.shuffle.partitions", 60)
         self.metadata_df = self.DButils.load_from_db(self.spark, self.get_metadata_query())
         self.state_df = self.DButils.load_from_db(self.spark, self.config.state_dim)
-        logging.info("initialization done")
+        self.logger.info("initialization done")
 
     def get_metadata_query(self):
         return """(SELECT sector_type, sector_sub_type, max(record_date) as record_date \
@@ -72,7 +73,7 @@ class AnalyticsEtl:
             self.DButils.insert_update_metadata(monthly_table, housing_df.count(), max_date,
                                                 monthly_table, self.sector_type)
         except Exception as ex:
-            logging.error("Error extracting data %s", ex)
+            self.logger.error("Error extracting data %s", ex)
             raise ex
 
     def transform_load_housing_price(self):
@@ -103,7 +104,7 @@ class AnalyticsEtl:
             self.DButils.insert_update_metadata(monthly_table, housing_df.count(), max_date,
                                                 monthly_table, self.sector_type)
         except Exception as ex:
-            logging.error("Error extracting data %s", ex)
+            self.logger.error("Error extracting data %s", ex)
             raise ex
 
 

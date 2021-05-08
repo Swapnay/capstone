@@ -59,7 +59,7 @@ class TransformLoad:
 
     def transform_load_world_data(self):
         try:
-            logging.info("Transform and load world data")
+            self.logger.info("Transform and load world data")
             start_time = time.time()
             self.spark.conf.set("spark.sql.execution.arrow.enabled", "False")
             covid_world_raw = self.config.covid_world_raw
@@ -114,18 +114,18 @@ class TransformLoad:
             record_count = world_data_df.count()
             self.DButils.insert_update_metadata(self.config.covid_world_sector, record_count, max_date,
                                                 self.config.covid_world_sector, self.sector_type)
-            logging.info("successfully loaded covid world data till %s", max_date)
+            self.logger.info("successfully loaded covid world data till %s", max_date)
             end_time = time.time()
             print("it took this long to run: {}".format(end_time-start_time))
-            logging.info("it took this long to run: {}".format(end_time-start_time))
+            self.logger.info("it took this long to run: {}".format(end_time-start_time))
         except Exception as ex:
-            logging.error("Error extracting data %s", ex)
+            self.logger.error("Error extracting data %s", ex)
             raise ex
 
     def transform_load_usa_data(self):
         try:
             start_time = time.time()
-            logging.info("Transform and load usa data")
+            self.logger.info("Transform and load usa data")
             self.spark.conf.set("spark.sql.execution.arrow.enabled", "False")
             usa_df1 = self.DButils.load_from_db(self.spark, self.get_usa_table_query())
             if usa_df1.count() ==0:
@@ -160,12 +160,12 @@ class TransformLoad:
                                                 self.config.covid_usa_sector, self.sector_type)
             t1 = time.time()
             print("it took this save to db: {}".format(t1-t0))
-            logging.info("successfully loaded covid USA data till %s", max_date)
+            self.logger.info("successfully loaded covid USA data till %s", max_date)
             end_time = time.time()
             print("it took this long to run: {}".format(end_time-start_time))
-            logging.info("it took this long to run: {}".format(end_time-start_time))
+            self.logger.info("it took this long to run: {}".format(end_time-start_time))
         except Exception as ex:
-            logging.error("Error transform data transform_load_usa_data %s", ex)
+            self.logger.error("Error transform data transform_load_usa_data %s", ex)
             raise ex
 
 

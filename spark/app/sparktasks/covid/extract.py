@@ -26,23 +26,19 @@ class Extract:
             for key, value in housing_dict.items():
                 logging.info("extract raw data  from  %s", value)
                 covid_data = pd.read_csv(value)
-                # row = self.metadata_df.filter(self.metadata_df.sector_sub_type == key.lower()).first()
-                # if row:
-                #     record_date = row[1]
-                #     covid_data = covid_data[(covid_data['submission_date'] > record_date)]
                 path = os.path.join(self.config.data_dir, key + ".csv")
                 covid_data.to_csv(path, index=False)
             end_time = time.time()
             print("it took this long to run run extract_from_source: {}".format(end_time-start_time))
-            logging.info("it took this long to run extract_from_source: {}".format(end_time-start_time))
+            self.logger.info("it took this long to run extract_from_source: {}".format(end_time-start_time))
         except Exception as ex:
-            logging.error("Error extracting data %s", ex)
+            self.logger.error("Error extracting data %s", ex)
             raise ex
 
     def store_raw_in_db(self):
         try:
             for name, value in dict(self.config.covid19_source).items():
-                logging.info("store raw data  %s", name)
+                self.logger.info("store raw data  %s", name)
                 covid_usa = os.path.join(self.config.data_dir , name + ".csv")
                 url = covid_usa
                 file_name = os.path.basename(url)
@@ -52,7 +48,7 @@ class Extract:
                     confirmed_us_df = confirmed_us_df.fillna(0)
                     self.DButils.save_to_db(confirmed_us_df, self.config.get_raw_by_sector(name),mode='overwrite')
         except Exception as ex:
-            logging.error("Error store covid ata in raw  %s", ex)
+            self.logger.error("Error store store_raw_in_db  %s", ex)
             raise ex
 
 

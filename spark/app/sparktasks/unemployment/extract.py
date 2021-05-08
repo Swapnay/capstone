@@ -92,12 +92,12 @@ class Extract:
                 with open(file_path, 'wb') as outf:
                     outf.write(response.content)
             except Exception as ex:
-                logging.error("Error extracting data extract_state_rate %s", ex)
+                self.logger.error("Error extracting data extract_state_rate %s", ex)
                 raise ex
 
     def extract_state_rate_data(self):
         try:
-            logging.info("about to extract employment data by state")
+            self.logger.info("about to extract employment data by state")
             df = pd.read_table(self.state_api)
             area_list = []
             for i in range(df.shape[0]):
@@ -116,14 +116,14 @@ class Extract:
                 response = requests.post(self.api_url, data=data, headers=headers)
                 with open(file_path, 'wb') as outf:
                     outf.write(response.content)
-                logging.info("Extracted employment state data to %s", file_path)
+                self.logger.info("Extracted employment state data to %s", file_path)
         except Exception as ex:
-            logging.error("Error extracting data extract_state_rate %s", ex)
+            self.logger.error("Error extracting data extract_state_rate %s", ex)
             raise ex
 
     def store_raw_in_db(self):
         try:
-            logging.info("Writing employment data to raw table")
+            self.logger.info("Writing employment data to raw table")
             data_dir = self.config.data_dir
             for f in os.listdir(data_dir):
                 file_path = join(data_dir, f)
@@ -144,7 +144,7 @@ class Extract:
                     self.DButils.save_to_db(final_df, self.config.get_config('RAW', name))
 
         except Exception as ex:
-            logging.error("Error extracting data extract_state_rate %s", ex)
+            self.logger.error("Error extracting data extract_state_rate %s", ex)
             raise ex
 
     def flatten(self, df):
@@ -154,7 +154,7 @@ class Extract:
                                    if type(field.dataType) == ArrayType or type(field.dataType) == StructType])
             while len(complex_fields) != 0:
                 col_name = list(complex_fields.keys())[0]
-                print("Processing :" + col_name + " Type : " + str(type(complex_fields[col_name])))
+                self.logger("Processing :" + col_name + " Type : " + str(type(complex_fields[col_name])))
 
                 # if StructType then convert all sub element to columns.
                 # i.e. flatten structs
@@ -170,7 +170,7 @@ class Extract:
                                        if type(field.dataType) == ArrayType or type(field.dataType) == StructType])
             return df
         except Exception as ex:
-            logging.error("Error extracting data flatten %s", ex)
+            self.logger.error("Error extracting data flatten %s", ex)
             raise ex
 
 

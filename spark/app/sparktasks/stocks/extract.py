@@ -22,8 +22,7 @@ class Extract:
         self.config = Config()
         self.spark.conf.set("spark.sql.shuffle.partitions", 20)
         self.metadata_df = self.DButils.load_from_db(self.spark, self.get_metadata_query())
-
-        logging.info("initialization done")
+        self.logger.info("initialization done")
 
     def get_metadata_query(self):
         return """(SELECT * FROM {} WHERE sector_type = '{}'  ORDER BY execution_date desc) foo""" \
@@ -41,7 +40,7 @@ class Extract:
     # old data.
     def extract_from_source(self):
         try:
-            logging.info("Data Extract in progress from %s", self.config.stocks_sp)
+            self.logger.info("Data Extract in progress from %s", self.config.stocks_sp)
             data_dir = self.config.data_dir
             stocks_data = pd.read_csv(self.config.stocks_sp)
             symbols = stocks_data["Symbol"].to_list()
@@ -57,9 +56,9 @@ class Extract:
                     print(ex)
             full_path = os.path.join(data_dir,"STOCKS_SP_500.csv")
             stocks_data.to_csv(full_path, index=False)
-            logging.info("Data Extracted to %s", full_path)
+            self.logger.info("Data Extracted to %s", full_path)
         except Exception as ex:
-            logging.error("Error extracting data %s", ex)
+            self.logger.error("Error extracting data %s", ex)
             raise ex
 
     # Stores CSV in landing database as raw tables
@@ -96,12 +95,10 @@ class Extract:
                 self.DButils.insert_update_metadata(symbol, record_count, max_date, symbol, self.sector_type)
 
             end_time = time.time()
-            print("it took this long to run load_stock_data: {}".format(end_time - start_time))
-            logging.info("it took this long to run load_stock_data: {}".format(end_time - start_time))
-
-            logging.info("Created Raw table name %s", table_name)
+            self.logger.info("it took this long to run write_raw: {}".format(end_time - start_time))
+            self.logger.info("Created Raw table name %s", table_name)
         except Exception as ex:
-            logging.error("Error in write_raw %s", ex)
+            self.logger.error("Error in write_raw %s", ex)
             raise ex
 
 
