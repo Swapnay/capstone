@@ -1,29 +1,18 @@
 
-# Effect of Covid-19 on  Economy (work-in-progress)
+# COVID - 19 and Affected Sectors Data Warehouse
 ## 1. Problem Definition
 The COVID-19 virus pandemic has led to unexpected interruptions in economic activity around the world.In efforts to slow down the spread of COVID-19, many states and countries shut down several economic areas such as tourism and entertainment venues, restaurants, personal services, and some manufacturing facilities. This has led many areas into a recession. According to UNIDO, the economic crisis unleashed by the outbreak of COVID-19 is hurting economies, regardless of income level.
-In this capstone will visualize the progression of COVID-19 in terms of number of cases and deaths along with its effect on areas such as stock market, employment, CPI, food and agriculture. Time series data will be collected from various  sources that represent these area.
-This capstone will try to provide visual view for below questions:
 
-**Stock market:**
+In this capstone we will Extract, Transform and Load the data. Data will then be used to visualize the progression of COVID-19 in terms of number of cases and deaths along with its effect on areas such as stock market, employment. Time series data will be collected from various  sources that represent these area.
+This capstone will try to provide correlation between below points of interest.
 
-- The most raised / dropped stocks
-- The most stable/unstable stocks
+|Sector|  COVID - 19   | S&P 500 Stock         |  Housing Market| Unemployment Rate|
+| ------------- | ------------- |---------|--------|----------------|  
+|Points of intereset| World/ USA casese | The most raised / dropped stocks  |How housing prices/Inventory changed in each city/state|Unemploymetnt by Industry/ Race/ state|
 
-**Employment:**
-
-- Industries that have majority job losses.
-- Education level and income range of majority un employed.
-
-**Housing Market:**
-
-- How housing prices changed in each city
-- How Inventory changed and sales are moving (Metro & US)
- 
-**food and agriculture:**
 
 ## 2. Expected Results
-Since the data is continuous, Current plan is to use line chart, column chart and combination of both.
+Time Series Data warehouse.Data that can be used for analysis using line chart, column chart and combination of both.
 
 ## 2. Architecture
 ![Architecture](https://github.com/Swapnay/capstone/blob/master/docs/architecture.png)
@@ -41,7 +30,7 @@ All data selected is time series data
 **Detailed information about data sources is captured in [Data-Extraction](https://github.com/Swapnay/capstone/wiki/Data-Extraction) **
 
 
-## 4. Landing Zone:
+## 4. Data Extraction -Landing Zone:
  - Extracted Data files are saved to file system.
  - Raw tables with that data are created in Azure mysql
  Example landing zone in cloud (Amazon S3 / Azure Blog storage)
@@ -109,6 +98,9 @@ Following areas we
 * End user may also call above REST API to get aggregated data.
 Observations from data loaded:
 
+For more plots [Look at python note book](https://github.com/Swapnay/capstone/blob/master/notebooks/capstone_final.ipynb)
+[And also exploratory data analysis](https://github.com/Swapnay/capstone/blob/master/eda/Covid_Economy_impact.ipynb)
+
 * Leisure and Hospitality sector had most job losses. Construction, Transportation and utilities is second in the list.
 ![Sector](https://github.com/Swapnay/capstone/blob/master/docs/images/sector.png)
 
@@ -116,8 +108,7 @@ Observations from data loaded:
 In addition Nevada , like Michigan is also dependant on Manufacturing and Mining.
 ![State](https://github.com/Swapnay/capstone/blob/master/docs/images/Unemployment-covid.png)
 
-For more plots [Look at python note book](https://github.com/Swapnay/capstone/blob/master/notebooks/capstone_final.ipynb)
-[And also exploratory data analysis](https://github.com/Swapnay/capstone/blob/master/eda/Covid_Economy_impact.ipynb)
+
 
 
 
