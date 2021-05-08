@@ -50,7 +50,7 @@ of thousands of cooperating physical or virtual servers.
 More information on different zones [Data-Zones](https://github.com/Swapnay/capstone/wiki/Data-Model) 
 
 ## 7. Data model 
-[Star Schema data model is Here](https://github.com/Swapnay/capstone/tree/master/data_model/erd)
+[Star Schema data model is Here](https://github.com/Swapnay/capstone/blob/master/data_model/erd/capstone.pdf)
 Reasons for using Star Schemas
  - Queries are simpler
  - Easier business insights reporting
@@ -69,7 +69,7 @@ Apache Airflow is used for below reasons:
 - Easily integrates with all cloud platforms 
 - Large user base
 
-More details on [project wiki](https://github.com/Swapnay/capstone/wiki/ETL-ELT-Workflow-Orchestration) 
+More details on [project wiki](https://github.com/Swapnay/capstone/wiki/ETL--ELT-Workflow-Orchestration) 
 and [DAGS folder](https://github.com/Swapnay/capstone/tree/master/dags)
 
 ETL DAG run for Stocks data
@@ -108,6 +108,13 @@ For more plots [Look at python note book](https://github.com/Swapnay/capstone/bl
   In addition Nevada , like Michigan, is also dependent on Manufacturing and Mining.
 ![State](https://github.com/Swapnay/capstone/blob/master/docs/images/Unemployment-covid.png)
 
+## 12 Resources
+* [Slide Deck](https://drive.google.com/file/d/1wvZu4Kef1g3AuXII4j7UoqYcxFocQB_O/view?usp=sharing)
+* [Project Instructions](https://github.com/Swapnay/capstone/tree/master/docker)
+* [Project WIKI](https://github.com/Swapnay/capstone/wiki/COVID---19---Economy-impact)
+* [Star Schema data model is Here](https://github.com/Swapnay/capstone/blob/master/data_model/erd/capstone.pdf)]
+* [Data analysis](https://github.com/Swapnay/capstone/blob/master/notebooks/)
+* [REST API](https://github.com/Swapnay/capstone/blob/master/rest-API/Readme.md)
 
 
 
