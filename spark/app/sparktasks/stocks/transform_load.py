@@ -72,11 +72,11 @@ class TransformLoad:
 
     def load_stock_data(self):
         start_time = time.time()
-        stocks_fact = self.DButils.load_from_db(self.spark, self.get_table_query()) #'Date', self.get_start_date(),datetime.now().date())
+        stocks_fact = self.DButils.load_from_db(self.spark, self.get_table_query()) 
         if stocks_fact.count() == 0:
             return
         print("partitions {}".format(stocks_fact.rdd.getNumPartitions()))
-        date_udf = udf(lambda d: UdfUtils.convert_to_date_world(d), DateType())
+        date_udf = udf(lambda d: UdfUtils.convert_to_date_stocks(d), DateType())
         stocks_fact = stocks_fact.fillna(0)
         stocks_fact = stocks_fact.withColumnRenamed("High", "high") \
             .withColumnRenamed("Low", "low") \
