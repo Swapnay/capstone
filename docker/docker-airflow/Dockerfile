@@ -1,8 +1,8 @@
-# VERSION 1.10.2
-# AUTHOR: Thiago Cordon Rodrigues
+# VERSION 1.0
+# AUTHOR: swapna
 # DESCRIPTION: Airflow container with JAVA 8 and SPARK binaries
-# BUILD: docker build --rm -t docker-airflow-spark:latest .
-# BASED ON: https://github.com/puckel/docker-airflow
+# BUILD: docker build --rm -t airflow-spark:latest .
+# BASED ON: https://github.com/cordon-thiago/airflow-spark
 
 # stretch debian version allows JAVA JDK 8
 FROM python:3.6-stretch
