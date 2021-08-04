@@ -45,7 +45,7 @@ docker-compose up
 
 The app will start running at <http://localhost:8080>.
 
-## Lok at Swagger API - http://localhost:8080/swagger-ui.html
+##  Swagger API - http://localhost:8080/swagger-ui.html
 
  
 + open `SecurityJavaConfig`and you can find 2 roles and credentials
